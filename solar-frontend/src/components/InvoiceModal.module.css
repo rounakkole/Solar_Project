@@ -1,0 +1,102 @@
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 2000;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+
+.modal {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  width: 100%; max-width: 560px;
+  max-height: 90vh; overflow-y: auto;
+  animation: slideUp 0.25s ease;
+}
+@keyframes slideUp { from { transform: translateY(30px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
+
+.header {
+  padding: 1.3rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.header h3 { font-size: 1rem; }
+.close {
+  background: none; border: none;
+  color: var(--text2); font-size: 1.3rem;
+  transition: color 0.2s;
+}
+.close:hover { color: var(--text); }
+
+.body { padding: 1.5rem; }
+
+.preview {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1.4rem;
+  margin-bottom: 1.2rem;
+}
+
+.invHead {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.8rem;
+}
+.invLogo {
+  font-family: var(--font-head); font-size: 1.2rem; font-weight: 800;
+  background: linear-gradient(90deg,#F59E0B,#FBBF24);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.invAddress { font-size: 0.72rem; color: var(--text2); margin-top: 0.25rem; }
+
+.invMeta { text-align: right; }
+.invMeta span { display: block; font-size: 0.7rem; color: var(--text2); }
+.invMeta strong { display: block; font-size: 0.82rem; margin-bottom: 0.3rem; }
+
+.sysBox {
+  background: rgba(245,158,11,0.07);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.9rem;
+  margin-bottom: 1rem;
+  display: flex; gap: 0.8rem; align-items: center;
+  font-size: 0.82rem;
+}
+.sysBox span { color: var(--text2); }
+.sysBox strong { color: var(--primary); }
+
+.table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-bottom: 0.8rem; }
+.table th {
+  text-align: left; padding: 0.45rem 0.5rem;
+  color: var(--text2); border-bottom: 1px solid var(--border);
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em;
+}
+.table td {
+  padding: 0.45rem 0.5rem;
+  border-bottom: 1px solid rgba(55,65,81,0.4);
+}
+.amtCell { color: var(--primary); font-weight: 600; text-align: right; }
+.table th:nth-child(3), .table th:nth-child(4) { text-align: right; }
+.table td:nth-child(3) { text-align: right; }
+
+.totals { padding-top: 0.5rem; }
+.tRow {
+  display: flex; justify-content: space-between;
+  font-size: 0.82rem; padding: 0.3rem 0;
+  border-bottom: 1px solid rgba(55,65,81,0.3);
+}
+.tGrand {
+  display: flex; justify-content: space-between;
+  font-size: 1rem; font-weight: 800;
+  font-family: var(--font-head);
+  color: var(--primary);
+  padding-top: 0.6rem; margin-top: 0.2rem;
+}
+
+.actions { display: flex; gap: 0.8rem; }
+
+@media (max-width: 480px) {
+  .actions { flex-direction: column; }
+}

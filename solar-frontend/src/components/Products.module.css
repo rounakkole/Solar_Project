@@ -1,0 +1,62 @@
+.filters {
+  display: flex; gap: 0.6rem; flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+.filterBtn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  transition: all 0.2s;
+}
+.filterBtn:hover, .active {
+  background: var(--primary);
+  color: #000;
+  border-color: var(--primary);
+  font-weight: 700;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+  gap: 1.25rem;
+}
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: border-color 0.25s, transform 0.25s;
+}
+.card:hover { border-color: var(--primary); transform: translateY(-4px); }
+.imgBox {
+  height: 150px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 3.2rem;
+  background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(16,185,129,0.04));
+}
+.body { padding: 1.1rem; }
+.catBadge { margin-bottom: 0.5rem; }
+.body h3 { font-size: 0.95rem; margin: 0.3rem 0 0.4rem; }
+.body p  { color: var(--text2); font-size: 0.82rem; line-height: 1.55; margin-bottom: 0.9rem; }
+.footer { display: flex; justify-content: space-between; align-items: center; }
+.price {
+  font-family: var(--font-head);
+  font-size: 1.15rem; font-weight: 800;
+  color: var(--primary);
+}
+.addBtn {
+  background: var(--primary);
+  color: #000;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.38rem 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  transition: background 0.2s, transform 0.15s;
+}
+.addBtn:hover { background: var(--primary-dark); transform: scale(1.04); }
+.stock { margin-top: 0.5rem; }
+.inStock  { font-size: 0.72rem; color: var(--accent); }
+.outStock { font-size: 0.72rem; color: var(--red); }
