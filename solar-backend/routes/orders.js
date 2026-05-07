@@ -83,6 +83,7 @@ router.post('/', async (req, res) => {
     }
 
     await conn.commit()
+    req.io.emit('dashboard_update');
 
     // Send confirmation email
     const [cust] = await db.query('SELECT * FROM customers WHERE customer_id = ?', [customer_id])

@@ -67,6 +67,7 @@ router.post('/', async (req, res) => {
        invoice_no || `INV-${Date.now().toString().slice(-6)}`, due_date, notes]
     )
     res.status(201).json({ payment_id: result.insertId, message: 'Payment recorded successfully' })
+    req.io.emit('dashboard_update');
   } catch (err) {
     res.status(500).json({ message: err.message })
   }

@@ -53,6 +53,10 @@ router.post('/', async (req, res) => {
       sendEnquiryConfirmation({ name, email, phone, city, service_type, monthly_bill }).catch(() => {})
     }
 
+    if (req.io) {
+      req.io.emit('dashboard_update');
+    }
+
     res.status(201).json({
       enquiry_id: result.insertId,
       message: 'Enquiry submitted! We will contact you within 24 hours.',

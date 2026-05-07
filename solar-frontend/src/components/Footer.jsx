@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="container">
         <div className={styles.grid}>
           <div>
-            <div className={styles.logo}>☀ SolarTech Pro</div>
+            <div className={styles.logo}>ARDOUR GREEN ENERGY</div>
             <p className={styles.about}>
               Maharashtra's most trusted solar installer. Powering homes & businesses with clean energy since 2015.
             </p>
@@ -25,14 +25,22 @@ export default function Footer() {
             <div key={col.title}>
               <h4>{col.title}</h4>
               <ul>
-                {col.links.map(l => <li key={l}><a href="#">{l}</a></li>)}
+                {col.links.map(l => (
+  <li key={l}>
+    {l === 'Gallery' ? (
+      <Link to="/gallery">{l}</Link>
+    ) : (
+      <a href="#">{l}</a>
+    )}
+  </li>
+))}
               </ul>
             </div>
           ))}
         </div>
 
         <div className={styles.bottom}>
-          <p>© 2025 SolarTech Pro. All rights reserved. Final Semester Project.</p>
+          <p>© 2025 ARDOUR GREEN ENERGY. All rights reserved. Final Semester Project.</p>
           <p className={styles.tagline}>🌞 Go Solar. Go Green. Save Big.</p>
         </div>
       </div>

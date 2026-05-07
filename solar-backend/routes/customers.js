@@ -1,9 +1,10 @@
 const express  = require('express')
 const router   = express.Router()
 const db       = require('../config/db')
+const auth = require('../middleware/auth');
 
 // GET all customers
-router.get('/', async (req, res) => {
+router.get('/',auth, async (req, res) => {
   try {
     const [rows] = await db.query(
       'SELECT * FROM customers ORDER BY created_at DESC'

@@ -1,13 +1,10 @@
 import { useState } from 'react'
 import styles from './MapSection.module.css'
 
-const LOCATIONS = [
-  { name: 'Nagpur HQ',     city: 'Nagpur, MH',   cap: '2.5 MW', lat: 21.1458, lng: 79.0882, projects: 420 },
-  { name: 'Pune Office',   city: 'Pune, MH',     cap: '1.8 MW', lat: 18.5204, lng: 73.8567, projects: 310 },
-  { name: 'Mumbai Hub',    city: 'Mumbai, MH',   cap: '3.2 MW', lat: 19.0760, lng: 72.8777, projects: 580 },
-  { name: 'Nashik Site',   city: 'Nashik, MH',   cap: '0.9 MW', lat: 19.9975, lng: 73.7898, projects: 180 },
-  { name: 'Aurangabad',    city: 'Aurangabad, MH', cap: '1.1 MW', lat: 19.8762, lng: 75.3433, projects: 210 },
-]
+const LOCATIONS = [  
+  { name: 'Pune Office',   city: 'Pune, MH',     cap: '1.8 MW', lat: 18.5204, lng: 73.8567, projects: 310 }, 
+   
+  ];
 
 export default function MapSection() {
   const [active, setActive] = useState(0)

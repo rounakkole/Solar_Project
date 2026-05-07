@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import api from '../api/axios'
-import { useToast } from '../App'
+import { useToast, useCart } from '../App' // Updated to include useCart
 import styles from './Products.module.css'
+import { io } from 'socket.io-client'
 
 const FALLBACK = [
   { product_id:1, product_name:'Mono PERC Panel 400W',  category:'panel',    price:18500, brand:'Waaree',  description:'21.3% efficiency, 25-year warranty. Anti-reflective coating.', stock_quantity:150 },
@@ -18,9 +19,40 @@ export default function Products() {
   const [products, setProducts] = useState(FALLBACK)
   const [filter, setFilter] = useState('all')
   const toast = useToast()
+  const { addToCart } = useCart() // Get addToCart from App context
 
   useEffect(() => {
-    api.get('/products').then(r => { if (r.data?.length) setProducts(r.data) }).catch(() => {})
+    api.get('/products').then(r => { 
+      const arr = r.data?.data || r.data;
+      if (arr?.length) {
+        setProducts(arr)
+      }
+    }).catch(() => {})
+
+    const socket = io('http://localhost:5000')
+    
+    // Setup socket connection and listeners
+    socket.on('connect', () => {
+      console.log('Connected to real-time inventory updates')
+    })
+
+    socket.on('stock_updated', (data) => {
+      setProducts(prev => prev.map(p => 
+        p.product_id === Number(data.product_id) 
+          ? { ...p, stock_quantity: data.new_quantity } 
+          : p
+      ))
+    })
+    
+    socket.on('product_updated', (data) => {
+      setProducts(prev => prev.map(p => 
+        p.product_id === Number(data.product_id) 
+          ? { ...p, ...data } 
+          : p
+      ))
+    })
+
+    return () => socket.disconnect()
   }, [])
 
   const cats = ['all', ...new Set(products.map(p => p.category))]
@@ -59,7 +91,10 @@ export default function Products() {
                   <span className={styles.price}>₹{Number(p.price).toLocaleString('en-IN')}</span>
                   <button
                     className={styles.addBtn}
-                    onClick={() => toast(`${p.product_name} added to quote!`, '🛒')}
+                    onClick={() => {
+                      addToCart(p)
+                      toast(`${p.product_name} added to cart!`, '🛒')
+                    }}
                   >
                     + Add to Quote
                   </button>

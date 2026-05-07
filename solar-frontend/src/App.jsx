@@ -12,10 +12,18 @@ import Footer from "./components/Footer";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLogin from "./pages/AdminLogin";
 import Toast from "./components/Toast";
+import Gallery from './pages/Gallery';
+import CartSidebar from "./components/CartSidebar";
+
 
 export const ToastCtx = createContext(null);
 export function useToast() {
   return useContext(ToastCtx);
+}
+
+export const CartCtx = createContext(null);
+export function useCart() {
+  return useContext(CartCtx);
 }
 
 function HomePage() {
@@ -35,6 +43,8 @@ function HomePage() {
 
 export default function App() {
   const [toasts, setToasts] = useState([]);
+  const [cart, setCart] = useState([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const addToast = (msg, icon = "✅") => {
     const id = Date.now();
@@ -44,11 +54,32 @@ export default function App() {
     }, 3500);
   };
 
+  const addToCart = (product) => {
+    setCart((prev) => [...prev, product]);
+  };
+
+  const removeFromCart = (index) => {
+    setCart((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const clearCart = () => setCart([]);
+
+  const cartValue = {
+    cart,
+    addToCart,
+    removeFromCart,
+    clearCart,
+    isCartOpen,
+    setIsCartOpen
+  };
+
   const [isAuth, setIsAuth] = useState(!!localStorage.getItem("token"));
 
   return (
     <ToastCtx.Provider value={addToast}>
-      <Navbar />
+      <CartCtx.Provider value={cartValue}>
+        <Navbar />
+        <CartSidebar />
 
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -60,9 +91,11 @@ export default function App() {
           path="/admin"
           element={isAuth ? <AdminDashboard /> : <Navigate to="/login" />}
         />
+        <Route path="/gallery" element={<Gallery />} />
       </Routes>
 
       <Toast toasts={toasts} />
+      </CartCtx.Provider>
     </ToastCtx.Provider>
   );
 }

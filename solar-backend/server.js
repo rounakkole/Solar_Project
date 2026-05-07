@@ -1,61 +1,140 @@
-require('dotenv').config()
-const express  = require('express')
-const cors     = require('cors')
-const path     = require('path')
+require("dotenv").config();
 
-const app = express()
+const express = require("express");
+const http = require("http");
+const cors = require("cors");
+const { Server } = require("socket.io");
+const { pool, testConnection } = require("./config/db");
 
-// ─── Middleware ───────────────────────────────────────────────
+console.log("🚀 Starting Solar Panel Backend Server...\n");
+
+const app = express();
+const server = http.createServer(app);
+
+// ✅ CORS setup
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:5173'],
-  credentials: true,
-}))
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+  origin: process.env.FRONTEND_URL || "http://localhost:3000",
+  credentials: true
+}));
 
-// Request logger (dev only)
-if (process.env.NODE_ENV === 'development') {
-  app.use((req, _res, next) => {
-    console.log(`[${new Date().toLocaleTimeString()}] ${req.method} ${req.url}`)
-    next()
-  })
+// ✅ Middleware
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+
+// ✅ Health Check Route (before DB)
+app.get("/api/health", (req, res) => {
+  res.json({ 
+    status: "OK",
+    server: "Running",
+    timestamp: new Date().toISOString()
+  });
+});
+
+// ✅ Socket.IO setup
+const io = new Server(server, {
+  cors: {
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    credentials: true
+  }
+});
+
+io.on("connection", (socket) => {
+  console.log("✅ Socket connected:", socket.id);
+
+  socket.on("disconnect", () => {
+    console.log("❌ Socket disconnected:", socket.id);
+  });
+});
+
+// ✅ Import and register routes
+const productRoutes = require("./routes/products");
+const cartRoutes = require("./routes/cart");
+const orderRoutes = require("./routes/orders");
+const paymentRoutes = require("./routes/payments");
+const quotationRoutes = require("./routes/quotation");
+const enquiriesRoutes = require("./routes/enquiries");
+const customersRoutes = require("./routes/customers");
+const supplierRoutes = require("./routes/suppliers");
+const installationRoutes = require("./routes/installations");
+const adminRoutes = require("./routes/admin");
+const authRoutes = require("./routes/auth");
+const razorpayRoutes = require("./routes/razorpay");
+
+// ✅ Register API routes
+app.use("/api/products", productRoutes);
+app.use("/api/cart", cartRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/payments", paymentRoutes);
+app.use("/api/quotations", quotationRoutes);
+app.use("/api/enquiries", enquiriesRoutes);
+app.use("/api/customers", customersRoutes);
+app.use("/api/suppliers", supplierRoutes);
+app.use("/api/installations", installationRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/razorpay", razorpayRoutes);
+
+// ✅ 404 handler
+app.use((req, res) => {
+  res.status(404).json({ 
+    error: "Endpoint not found",
+    path: req.path,
+    method: req.method
+  });
+});
+
+// ✅ Error handler
+app.use((err, req, res, next) => {
+  console.error("❌ Error:", err.message);
+  res.status(500).json({ 
+    error: "Internal Server Error",
+    message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
+  });
+});
+
+// ✅ Start server safely
+const PORT = process.env.PORT || 5000;
+
+// Initialize database before starting server
+async function startServer() {
+  try {
+    console.log("🔗 Testing Database Connection...");
+    await testConnection();
+    
+    server.listen(PORT, () => {
+      console.log("\n✅ Server Status: ONLINE");
+      console.log(`📍 Server running on http://localhost:${PORT}`);
+      console.log(`🔍 Health check: http://localhost:${PORT}/api/health`);
+      console.log(`🌐 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
+      console.log(`📊 Database: ${process.env.DB_NAME || 'solar_db'}`);
+      console.log("\n🚀 All systems operational!\n");
+    }).on("error", (err) => {
+      if (err.code === "EADDRINUSE") {
+        console.error(`❌ Port ${PORT} already in use`);
+        console.error("💡 Try: kill -9 $(lsof -t -i:${PORT}) or use a different port");
+        process.exit(1);
+      } else {
+        console.error("❌ Server error:", err);
+        process.exit(1);
+      }
+    });
+  } catch (err) {
+    console.error("❌ Failed to start server:", err.message);
+    process.exit(1);
+  }
 }
 
-// ─── Routes ───────────────────────────────────────────────────
-app.use('/api/customers',     require('./routes/customers'))
-app.use('/api/suppliers',     require('./routes/suppliers'))
-app.use('/api/products',      require('./routes/products'))
-app.use('/api/orders',        require('./routes/orders'))
-app.use('/api/installations', require('./routes/installations'))
-app.use('/api/payments',      require('./routes/payments'))
-app.use('/api/enquiries',     require('./routes/enquiries'))
-app.use('/api/auth', require('./routes/auth'));
+startServer();
 
-// ─── Health check ─────────────────────────────────────────────
-app.get('/api/health', (_req, res) => {
-  res.json({
-    status:  'ok',
-    project: 'SolarTech Pro API',
-    version: '1.0.0',
-    time:    new Date().toISOString(),
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('\n📛 SIGTERM signal received: closing HTTP server')
+  server.close(() => {
+    console.log('✅ HTTP server closed')
+    pool.end()
+    console.log('✅ Database pool closed')
+    process.exit(0)
   })
 })
 
-// ─── 404 handler ─────────────────────────────────────────────
-app.use((_req, res) => {
-  res.status(404).json({ message: 'Route not found' })
-})
 
-// ─── Global error handler ─────────────────────────────────────
-app.use((err, _req, res, _next) => {
-  console.error('❌ Server error:', err.message)
-  res.status(500).json({ message: 'Internal server error' })
-})
-
-// ─── Start ────────────────────────────────────────────────────
-const PORT = process.env.PORT || 5000
-app.listen(PORT, () => {
-  console.log(`\n🚀 SolarTech Pro API running on http://localhost:${PORT}`)
-  console.log(`📋 Health: http://localhost:${PORT}/api/health`)
-  console.log(`🌍 Mode:   ${process.env.NODE_ENV || 'development'}\n`)
-})

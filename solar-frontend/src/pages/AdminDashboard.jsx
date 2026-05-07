@@ -3,8 +3,16 @@ import { Link } from 'react-router-dom'
 import api from '../api/axios'
 import { useToast } from '../App'
 import styles from './AdminDashboard.module.css'
+import { io } from 'socket.io-client'
+import jsPDF from 'jspdf'
+import 'jspdf-autotable'
 
 // ─── Helpers ─────────────────────────────────────────────────
+function tabIcon(t) {
+  const icons = { Dashboard:'📊', Customers:'👥', Suppliers:'🏭', Products:'📦', Orders:'🛒', Installations:'🔧', Payments:'💳', Enquiries:'📩' }
+  return icons[t] || '📋'
+}
+
 const StatusBadge = ({ s }) => {
   const map = {
     active:'badge-green', completed:'badge-green', installed:'badge-green', received:'badge-green',
@@ -15,53 +23,6 @@ const StatusBadge = ({ s }) => {
 }
 
 const TABS = ['Dashboard','Customers','Suppliers','Products','Orders','Installations','Payments','Enquiries']
-
-// ─── Seed data (used when API not running) ───────────────────
-const SEED = {
-  customers: [
-    { customer_id:1, name:'Rajesh Kumar',  email:'rajesh@email.com', phone:'9876543210', city:'Nagpur',  property_type:'residential', created_at:'2025-03-01' },
-    { customer_id:2, name:'Priya Sharma',  email:'priya@email.com',  phone:'9765432109', city:'Pune',    property_type:'commercial',  created_at:'2025-03-05' },
-    { customer_id:3, name:'Amit Patel',    email:'amit@email.com',   phone:'9654321098', city:'Mumbai',  property_type:'industrial',  created_at:'2025-03-10' },
-    { customer_id:4, name:'Sunita Verma',  email:'sunita@email.com', phone:'9543210987', city:'Nashik',  property_type:'residential', created_at:'2025-03-15' },
-    { customer_id:5, name:'Deepak Joshi',  email:'deepak@email.com', phone:'9432109876', city:'Nagpur',  property_type:'residential', created_at:'2025-03-18' },
-  ],
-  suppliers: [
-    { supplier_id:1, company_name:'Waaree Energies Ltd',  contact_person:'Mr. Patil', email:'patil@waaree.com',   phone:'9800000001', city:'Surat',   gst_number:'27AABCW5678G1Z1', status:'active' },
-    { supplier_id:2, company_name:'Luminous Power Tech',  contact_person:'Mr. Gupta', email:'gupta@luminous.com', phone:'9800000002', city:'Delhi',   gst_number:'07AABCL9012H2Z2', status:'active' },
-    { supplier_id:3, company_name:'Tata Power Solar',     contact_person:'Ms. Singh', email:'singh@tata.com',     phone:'9800000003', city:'Mumbai',  gst_number:'27AABCT3456I3Z3', status:'active' },
-    { supplier_id:4, company_name:'Nexus Metal Struct',   contact_person:'Mr. Desai', email:'desai@nexus.com',    phone:'9800000004', city:'Pune',    gst_number:'27AABCN7890J4Z4', status:'active' },
-  ],
-  products: [
-    { product_id:1, product_name:'Mono PERC Panel 400W', category:'panel',    brand:'Waaree',   price:18500, stock_quantity:150, is_active:true },
-    { product_id:2, product_name:'Poly Panel 330W',       category:'panel',    brand:'Waaree',   price:14200, stock_quantity:200, is_active:true },
-    { product_id:3, product_name:'Hybrid Inverter 5kW',   category:'inverter', brand:'Luminous', price:32000, stock_quantity:40,  is_active:true },
-    { product_id:4, product_name:'Lithium Battery 5kWh',  category:'battery',  brand:'Exide',    price:85000, stock_quantity:20,  is_active:true },
-  ],
-  orders: [
-    { order_id:1, customer_name:'Rajesh Kumar', system_size_kw:5,  total_amount:247000, order_date:'2025-03-15', status:'installed' },
-    { order_id:2, customer_name:'Priya Sharma', system_size_kw:10, total_amount:485000, order_date:'2025-03-18', status:'confirmed' },
-    { order_id:3, customer_name:'Amit Patel',   system_size_kw:50, total_amount:2250000,order_date:'2025-03-20', status:'pending'   },
-    { order_id:4, customer_name:'Sunita Verma', system_size_kw:3,  total_amount:158000, order_date:'2025-03-22', status:'installed' },
-    { order_id:5, customer_name:'Deepak Joshi', system_size_kw:0,  total_amount:18000,  order_date:'2025-03-25', status:'confirmed' },
-  ],
-  installations: [
-    { installation_id:1, customer_name:'Rajesh Kumar', city:'Nagpur', total_kw:5,  technician_name:'Ravi Yadav',   completion_date:'2025-03-18', status:'completed'   },
-    { installation_id:2, customer_name:'Sunita Verma', city:'Nashik', total_kw:3,  technician_name:'Suresh Pawar', completion_date:'2025-03-25', status:'completed'   },
-    { installation_id:3, customer_name:'Priya Sharma', city:'Pune',   total_kw:10, technician_name:'Vikram Nair',  completion_date:null,          status:'in_progress' },
-    { installation_id:4, customer_name:'Amit Patel',   city:'Mumbai', total_kw:50, technician_name:'Team Alpha',   completion_date:null,          status:'scheduled'   },
-  ],
-  payments: [
-    { payment_id:1, order_id:1, customer_name:'Rajesh Kumar', amount:247000, method:'neft',  payment_date:'2025-03-16', status:'completed' },
-    { payment_id:2, order_id:2, customer_name:'Priya Sharma', amount:200000, method:'rtgs',  payment_date:'2025-03-19', status:'completed' },
-    { payment_id:3, order_id:3, customer_name:'Amit Patel',   amount:500000, method:'cheque',payment_date:'2025-03-21', status:'pending'   },
-    { payment_id:4, order_id:4, customer_name:'Sunita Verma', amount:158000, method:'upi',   payment_date:'2025-03-22', status:'completed' },
-  ],
-  enquiries: [
-    { enquiry_id:1, name:'Rohit Agrawal', email:'rohit@email.com', phone:'9100000001', city:'Nagpur', service_type:'Residential Solar', monthly_bill:3500, submitted_at:'2025-03-28', is_responded:false },
-    { enquiry_id:2, name:'Neha Kulkarni', email:'neha@email.com',  phone:'9100000002', city:'Pune',   service_type:'Commercial Solar',  monthly_bill:12000, submitted_at:'2025-03-29', is_responded:true },
-    { enquiry_id:3, name:'Raju Thorat',   email:'raju@email.com',  phone:'9100000003', city:'Nashik', service_type:'Subsidy Help',      monthly_bill:2800, submitted_at:'2025-03-30', is_responded:false },
-  ],
-}
 
 // ─── Reusable Table Wrapper ───────────────────────────────────
 function DataTable({ heads, children, loading }) {
@@ -77,8 +38,13 @@ function DataTable({ heads, children, loading }) {
 }
 
 // ─── Modal for Add/Edit ───────────────────────────────────────
-function AddModal({ title, fields, onSave, onClose }) {
-  const [form, setForm] = useState({})
+function AddModal({ title, fields, onSave, onClose, initialData }) {
+  const [form, setForm] = useState(initialData || {})
+
+  useEffect(() => {
+    setForm(initialData || {})
+  }, [initialData])
+
   return (
     <div className={styles.overlay} onClick={e => e.target === e.currentTarget && onClose()}>
       <div className={styles.modal}>
@@ -91,19 +57,41 @@ function AddModal({ title, fields, onSave, onClose }) {
             {fields.map(f => (
               <div key={f.key} className={styles.mField}>
                 <label>{f.label}</label>
+
                 {f.type === 'select'
-                  ? <select value={form[f.key]||''} onChange={e => setForm(p=>({...p,[f.key]:e.target.value}))}>
-                      {f.options.map(o=><option key={o}>{o}</option>)}
+                  ? (
+                    <select
+                      value={form[f.key] || ''}
+                      onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
+                    >
+                      <option value="">Select</option>
+                      {f.options?.map(o => <option key={o}>{o}</option>)}
                     </select>
-                  : <input type={f.type||'text'} placeholder={f.placeholder||''} value={form[f.key]||''}
-                      onChange={e => setForm(p=>({...p,[f.key]:e.target.value}))} />
+                  )
+                  : (
+                    <input
+                      type={f.type || 'text'}
+                      placeholder={f.placeholder || ''}
+                      value={form[f.key] || ''}
+                      onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
+                    />
+                  )
                 }
               </div>
             ))}
           </div>
+
           <div className={styles.modalActions}>
             <button className="btn-outline" onClick={onClose}>Cancel</button>
-            <button className="btn-primary" onClick={() => { onSave(form); onClose() }}>Save Record</button>
+            <button
+              className="btn-primary"
+              onClick={() => {
+                onSave(form)
+                onClose()
+              }}
+            >
+              Save Record
+            </button>
           </div>
         </div>
       </div>
@@ -113,15 +101,80 @@ function AddModal({ title, fields, onSave, onClose }) {
 
 // ─── Main Dashboard ───────────────────────────────────────────
 export default function AdminDashboard() {
-  const toast = useToast()
-  const [tab, setTab]           = useState('Dashboard')
-  const [data, setData]         = useState(SEED)
-  const [loading, setLoading]   = useState(false)
-  const [addModal, setAddModal] = useState(null)
 
-  // Try to fetch from real API
   useEffect(() => {
-  const load = async () => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
+
+  const toast = useToast()
+  const [tab, setTab] = useState('Dashboard')
+  const [data, setData] = useState({
+    customers: [],
+    suppliers: [],
+    products: [],
+    orders: [],
+    installations: [],
+    payments: [],
+    enquiries: [],
+  })
+  const [loading, setLoading] = useState(false)
+  const [addModal, setAddModal] = useState(null)
+  const [viewCustomer, setViewCustomer] = useState(null)
+  const [viewSupplier, setViewSupplier] = useState(null)
+  const [viewProduct, setViewProduct] = useState(null)
+  const [viewOrder, setViewOrder] = useState(null)
+  const [viewEnquiry, setViewEnquiry] = useState(null)
+  const [viewInstallation, setViewInstallation] = useState(null)
+  const [viewPayment, setViewPayment] = useState(null)
+
+  const handleViewCustomer = async (id) => {
+    try {
+      const res = await api.get(`/customers/${id}`)
+      setViewCustomer(res.data)
+    } catch (err) {
+      console.error(err)
+      toast("Error loading customer ❌")
+    }
+  }
+
+  const generateInvoice = (order) => {
+    const doc = new jsPDF()
+    doc.setFontSize(22)
+    doc.setTextColor(24, 24, 27)
+    doc.text('INVOICE', 14, 22)
+
+    doc.setFontSize(12)
+    doc.setTextColor(100)
+    doc.text(`Order ID: ORD-${String(order.order_id).padStart(3, '0')}`, 14, 32)
+    doc.text(`Date: ${order.order_date?.slice(0, 10) || new Date().toISOString().slice(0, 10)}`, 14, 38)
+    doc.text(`Status: ${order.status.toUpperCase()}`, 14, 44)
+
+    doc.text('Billed To:', 14, 56)
+    doc.setTextColor(24, 24, 27)
+    doc.text(order.customer_name || 'Customer', 14, 62)
+
+    doc.autoTable({
+      startY: 75,
+      head: [['Description', 'Amount']],
+      body: [
+        [`Order for ${order.customer_name}`, `Rs. ${Number(order.total_amount).toLocaleString('en-IN')}`]
+      ],
+      theme: 'grid',
+      headStyles: { fillColor: [16, 185, 129] }
+    })
+
+    const finalY = doc.lastAutoTable.finalY || 75
+    doc.setFontSize(14)
+    doc.text(`Total: Rs. ${Number(order.total_amount).toLocaleString('en-IN')}`, 14, finalY + 15)
+
+    doc.save(`Invoice_ORD-${String(order.order_id).padStart(3, '0')}.pdf`)
+    toast('Invoice downloaded! 📄')
+  }
+
+  const fetchAllData = async () => {
     setLoading(true);
 
     try {
@@ -129,52 +182,162 @@ export default function AdminDashboard() {
         api.get('/customers'),
         api.get('/suppliers'),
         api.get('/products'),
-        api.get('/orders/summary'),
-        api.get('/installations/summary'),
-        api.get('/payments/summary'),
+        api.get('/orders'),
+        api.get('/installations'),
+        api.get('/payments'),
         api.get('/enquiries'),
       ]);
 
       setData({
-        customers: cust.data,
-        suppliers: supp.data,
-        products: prod.data,
-        orders: ord.data,
-        installations: inst.data,
-        payments: pay.data,
-        enquiries: enq.data,
+        customers: cust.data || [],
+        suppliers: supp.data || [],
+        products: prod.data?.data || prod.data || [],
+        orders: ord.data || [],
+        installations: inst.data || [],
+        payments: pay.data || [],
+        enquiries: enq.data || [],
       });
 
     } catch (err) {
-      console.error("Backend failed:", err);
-      toast("Using demo data (backend issue)", "⚠");
-      setData(SEED);
+      console.error("API ERROR:", err.response?.data || err.message);
+      toast("Backend error or unauthorized ❌");
     } finally {
       setLoading(false);
     }
   };
 
-  load();
-}, []);
   useEffect(() => {
-  const token = localStorage.getItem("token");
+    fetchAllData();
 
-  if (!token) {
+    const socket = io('http://localhost:5000');
+    socket.on('dashboard_update', () => {
+      fetchAllData();
+    });
+
+    return () => socket.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.href = "/login";
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
     window.location.href = "/login";
+  };
+
+  const handleDeleteCustomer = async (id) => {
+    const confirm = window.confirm("Are you sure you want to delete this customer?")
+    if (!confirm) return
+
+    try {
+      await api.delete(`/customers/${id}`)
+      toast("Customer deleted 🗑")
+      fetchAllData()
+    } catch (err) {
+      console.error(err)
+      toast("Cannot delete: Linked data exists ❌")
+    }
   }
-}, []);
-const handleLogout = () => {
-  localStorage.removeItem("token");
-  window.location.href = "/login";
-};
+
+  const handleViewSupplier = async (id) => {
+    try {
+      const res = await api.get(`/suppliers/${id}`)
+      setViewSupplier(res.data)
+    } catch (err) {
+      console.error(err)
+      toast("Error loading supplier ❌")
+    }
+  }
+
+  const handleDeleteSupplier = async (id) => {
+    const confirm = window.confirm("Are you sure you want to delete this supplier?")
+    if (!confirm) return
+
+    try {
+      await api.delete(`/suppliers/${id}`)
+      toast("Supplier deleted 🗑")
+      fetchAllData()
+    } catch (err) {
+      console.error(err)
+      toast("Cannot delete: Linked products exist ❌")
+    }
+  }
+
+  const handleViewProduct = async (id) => {
+    try {
+      const res = await api.get(`/products/${id}`)
+      setViewProduct(res.data)
+    } catch (err) {
+      console.error(err)
+      toast("Error loading product ❌")
+    }
+  }
+
+  const handleDeleteProduct = async (id) => {
+    const confirm = window.confirm("Are you sure you want to delete this product?")
+    if (!confirm) return
+
+    try {
+      await api.delete(`/products/${id}`)
+      toast("Product deleted 🗑")
+      fetchAllData()
+    } catch (err) {
+      console.error(err)
+      toast("Cannot delete product ❌")
+    }
+  }
+
+  const handleViewOrder = async (id) => {
+    try {
+      const res = await api.get(`/orders/${id}`)
+      setViewOrder(res.data)
+    } catch (err) {
+      toast("Error loading order ❌")
+    }
+  }
+
+  const handleDeleteOrder = async (id) => {
+    if (!window.confirm("Delete order?")) return
+    try {
+      await api.delete(`/orders/${id}`)
+      toast("Order deleted 🗑")
+      fetchAllData()
+    } catch (err) {
+      toast("Cannot delete order ❌")
+    }
+  }
+
+  const handleViewEnquiry = async (id) => {
+    try {
+      const res = await api.get(`/enquiries/${id}`)
+      setViewEnquiry(res.data)
+    } catch (err) {
+      toast("Error loading enquiry ❌")
+    }
+  }
+
+  const handleDeleteEnquiry = async (id) => {
+    if (!window.confirm("Delete enquiry?")) return
+    try {
+      await api.delete(`/enquiries/${id}`)
+      toast("Enquiry deleted 🗑")
+      fetchAllData()
+    } catch (err) {
+      toast("Cannot delete enquiry ❌")
+    }
+  }
 
   const metrics = [
-    { label: 'Total Revenue',     value: '₹2.4 Cr',  sub: '↑ 18% this month',  color: 'var(--primary)' },
-    { label: 'Active Orders',     value: data.orders?.filter(o=>o.status!=='installed'&&o.status!=='cancelled').length || 0, sub: '↑ 12 new this week', color: '#60A5FA' },
-    { label: 'Completed Installs',value: data.installations?.filter(i=>i.status==='completed').length || 0,  sub: 'Total finished',  color: 'var(--accent)' },
-    { label: 'Total Customers',   value: data.customers?.length || 0,  sub: 'Registered', color: '#A78BFA' },
-    { label: 'Pending Enquiries', value: data.enquiries?.filter(e=>!e.is_responded).length || 0, sub: 'Needs follow-up', color: 'var(--red)' },
-    { label: 'Products in Stock', value: data.products?.reduce((s,p)=>s+(+p.stock_quantity||0),0) || 0, sub: 'Total units', color: 'var(--primary)' },
+    { label: 'Total Revenue', value: '₹2.4 Cr', sub: '↑ 18% this month', color: 'var(--primary)' },
+    { label: 'Active Orders', value: data.orders?.filter(o => o.status !== 'installed' && o.status !== 'cancelled').length || 0, sub: '↑ 12 new this week', color: '#60A5FA' },
+    { label: 'Completed Installs', value: data.installations?.filter(i => i.status === 'completed').length || 0, sub: 'Total finished', color: 'var(--accent)' },
+    { label: 'Total Customers', value: data.customers?.length || 0, sub: 'Registered', color: '#A78BFA' },
+    { label: 'Pending Enquiries', value: data.enquiries?.filter(e => !e.is_responded).length || 0, sub: 'Needs follow-up', color: 'var(--red)' },
+    { label: 'Products in Stock', value: data.products?.reduce((s, p) => s + (+p.stock_quantity || 0), 0) || 0, sub: 'Total units', color: 'var(--primary)' },
   ]
 
   // Add modals config
@@ -182,34 +345,64 @@ const handleLogout = () => {
     Customers: {
       title: 'New Customer',
       fields: [
-        { key:'name',          label:'Full Name',       placeholder:'Rajesh Kumar' },
-        { key:'email',         label:'Email',           placeholder:'rajesh@email.com' },
-        { key:'phone',         label:'Phone',           placeholder:'9876543210' },
-        { key:'city',          label:'City',            placeholder:'Nagpur' },
-        { key:'property_type', label:'Property Type',   type:'select', options:['residential','commercial','industrial'] },
+        { key: 'name', label: 'Full Name', placeholder: 'Rajesh Kumar' },
+        { key: 'email', label: 'Email', placeholder: 'rajesh@email.com' },
+        { key: 'phone', label: 'Phone', placeholder: '9876543210' },
+        { key: 'address', label: 'Address', placeholder: 'Full address' },
+        { key: 'pincode', label: 'Pincode', placeholder: '413501' },
+        { key: 'city', label: 'City', placeholder: 'Nagpur' },
+        { key: 'property_type', label: 'Property Type', type: 'select', options: ['residential', 'commercial', 'industrial'] },
       ],
-      onSave: rec => setData(d => ({ ...d, customers: [...d.customers, { ...rec, customer_id: Date.now() }] }))
+      onSave: async (rec) => {
+        try {
+          await api.post('/customers', rec)
+          const res = await api.get('/customers')
+          setData(d => ({ ...d, customers: res.data }))
+        } catch (err) {
+          console.error(err)
+          toast("Error adding customer ❌")
+        }
+      }
     },
+
     Orders: {
       title: 'New Order',
       fields: [
-        { key:'customer_name',   label:'Customer Name',   placeholder:'Rajesh Kumar' },
-        { key:'system_size_kw',  label:'System Size (kW)',type:'number', placeholder:'5' },
-        { key:'total_amount',    label:'Total Amount (₹)',type:'number', placeholder:'247000' },
-        { key:'status',          label:'Status',          type:'select', options:['pending','confirmed','installed','cancelled'] },
+        { key: 'customer_id', label: 'Customer ID', placeholder: '1' },
+        { key: 'system_size_kw', label: 'System Size (kW)', type: 'number', placeholder: '5' },
+        { key: 'total_amount', label: 'Total Amount (₹)', type: 'number', placeholder: '247000' },
       ],
-      onSave: rec => setData(d => ({ ...d, orders: [...d.orders, { ...rec, order_id: Date.now(), order_date: new Date().toISOString().slice(0,10) }] }))
+      onSave: async (rec) => {
+        try {
+          await api.post('/orders', rec)
+          const res = await api.get('/orders')
+          setData(d => ({ ...d, orders: res.data }))
+        } catch (err) {
+          console.error(err)
+          toast("Error adding order ❌")
+        }
+      }
     },
+
     Enquiries: {
       title: 'New Enquiry',
       fields: [
-        { key:'name',         label:'Name',         placeholder:'Customer name' },
-        { key:'phone',        label:'Phone',        placeholder:'9876543210' },
-        { key:'email',        label:'Email',        placeholder:'email@example.com' },
-        { key:'service_type', label:'Service',      type:'select', options:['Residential Solar','Commercial Solar','Industrial Solar','AMC','Subsidy Help'] },
-        { key:'monthly_bill', label:'Monthly Bill', type:'number', placeholder:'3500' },
+        { key: 'name', label: 'Name', placeholder: 'Customer name' },
+        { key: 'phone', label: 'Phone', placeholder: '9876543210' },
+        { key: 'email', label: 'Email', placeholder: 'email@example.com' },
+        { key: 'service_type', label: 'Service', type: 'select', options: ['Residential Solar', 'Commercial Solar', 'Industrial Solar', 'AMC', 'Subsidy Help'] },
+        { key: 'monthly_bill', label: 'Monthly Bill', type: 'number', placeholder: '3500' },
       ],
-      onSave: rec => setData(d => ({ ...d, enquiries: [...d.enquiries, { ...rec, enquiry_id: Date.now(), submitted_at: new Date().toISOString().slice(0,10), is_responded: false }] }))
+      onSave: async (rec) => {
+        try {
+          await api.post('/enquiries', rec)
+          const res = await api.get('/enquiries')
+          setData(d => ({ ...d, enquiries: res.data }))
+        } catch (err) {
+          console.error(err)
+          toast("Error adding enquiry ❌")
+        }
+      }
     },
   }
 
@@ -245,20 +438,19 @@ const handleLogout = () => {
           <div>
             <h1 className={styles.pageTitle}>{tab}</h1>
             <p className={styles.pageSub}>
-              {new Date().toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' })}
+              {new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
             </p>
           </div>
           <div className={styles.topActions}>
             <button className="btn-outline" onClick={() => toast('Data exported!', '⬇')}>⬇ Export CSV</button>
             {ADD_CONFIGS[tab] && (
               <button className="btn-primary" onClick={() => setAddModal(ADD_CONFIGS[tab])}>
-                ➕ Add {tab.slice(0,-1)}
+                ➕ Add {tab.slice(0, -1)}
               </button>
-              
             )}
             <button className="btn-outline" onClick={handleLogout}>
-          🚪 Logout
-              </button>
+              🚪 Logout
+            </button>
           </div>
         </div>
 
@@ -277,10 +469,10 @@ const handleLogout = () => {
             <div className={styles.dashGrid}>
               <div className={styles.dashCard}>
                 <h3>📦 Recent Orders</h3>
-                <DataTable heads={['Order','Customer','Size','Amount','Status']}>
-                  {data.orders?.slice(0,5).map(o => (
+                <DataTable heads={['Order', 'Customer', 'Size', 'Amount', 'Status']}>
+                  {data.orders?.slice(0, 5).map(o => (
                     <tr key={o.order_id}>
-                      <td className={styles.idCell}>ORD-{String(o.order_id).padStart(3,'0')}</td>
+                      <td className={styles.idCell}>ORD-{String(o.order_id).padStart(3, '0')}</td>
                       <td>{o.customer_name}</td>
                       <td>{o.system_size_kw} kW</td>
                       <td>₹{Number(o.total_amount).toLocaleString('en-IN')}</td>
@@ -291,8 +483,8 @@ const handleLogout = () => {
               </div>
               <div className={styles.dashCard}>
                 <h3>📩 Recent Enquiries</h3>
-                <DataTable heads={['Name','Phone','Service','Status']}>
-                  {data.enquiries?.slice(0,5).map(e => (
+                <DataTable heads={['Name', 'Phone', 'Service', 'Status']}>
+                  {data.enquiries?.slice(0, 5).map(e => (
                     <tr key={e.enquiry_id}>
                       <td><strong>{e.name}</strong></td>
                       <td>{e.phone}</td>
@@ -308,18 +500,23 @@ const handleLogout = () => {
 
         {/* ─── CUSTOMERS ─── */}
         {tab === 'Customers' && (
-          <DataTable loading={loading} heads={['ID','Name','Email','Phone','City','Type','Joined','Action']}>
+          <DataTable loading={loading} heads={['ID', 'Name', 'Email', 'Phone', 'City', 'Type', 'Joined', 'Action']}>
             {data.customers?.map(c => (
               <tr key={c.customer_id}>
-                <td className={styles.idCell}>CUS-{String(c.customer_id).padStart(3,'0')}</td>
+                <td className={styles.idCell}>CUS-{String(c.customer_id).padStart(3, '0')}</td>
                 <td><strong>{c.name}</strong></td>
                 <td className={styles.mutedCell}>{c.email}</td>
                 <td>{c.phone}</td>
                 <td>{c.city}</td>
                 <td><span className="badge badge-blue">{c.property_type}</span></td>
-                <td className={styles.mutedCell}>{c.created_at?.slice(0,10)}</td>
+                <td className={styles.mutedCell}>{c.created_at?.slice(0, 10)}</td>
                 <td>
-                  <button className={styles.actionBtn} onClick={() => toast(`Viewing ${c.name}`, '👁')}>View</button>
+                  <button
+                    className={styles.actionBtn}
+                    onClick={() => handleViewCustomer(c.customer_id)}
+                  >
+                    View
+                  </button>
                 </td>
               </tr>
             ))}
@@ -328,16 +525,23 @@ const handleLogout = () => {
 
         {/* ─── SUPPLIERS ─── */}
         {tab === 'Suppliers' && (
-          <DataTable loading={loading} heads={['ID','Company','Contact','Email','City','GST No.','Status']}>
+          <DataTable loading={loading} heads={['ID', 'Company', 'Contact', 'Email', 'City', 'GST No.', 'Status']}>
             {data.suppliers?.map(s => (
               <tr key={s.supplier_id}>
-                <td className={styles.idCell}>SUP-{String(s.supplier_id).padStart(3,'0')}</td>
+                <td className={styles.idCell}>SUP-{String(s.supplier_id).padStart(3, '0')}</td>
                 <td><strong>{s.company_name}</strong></td>
                 <td>{s.contact_person}</td>
                 <td className={styles.mutedCell}>{s.email}</td>
                 <td>{s.city}</td>
-                <td className={styles.mutedCell} style={{ fontSize:'0.75rem' }}>{s.gst_number}</td>
-                <td><StatusBadge s={s.status} /></td>
+                <td className={styles.mutedCell} style={{ fontSize: '0.75rem' }}>{s.gst_number}</td>
+                <td>
+                  <button
+                    className={styles.actionBtn}
+                    onClick={() => handleViewSupplier(s.supplier_id)}
+                  >
+                    View
+                  </button>
+                </td>
               </tr>
             ))}
           </DataTable>
@@ -345,18 +549,20 @@ const handleLogout = () => {
 
         {/* ─── PRODUCTS ─── */}
         {tab === 'Products' && (
-          <DataTable loading={loading} heads={['ID','Product Name','Category','Brand','Price','Stock','Status','Action']}>
+          <DataTable loading={loading} heads={['ID', 'Product Name', 'Category', 'Brand', 'Price', 'Stock', 'Status', 'Action']}>
             {data.products?.map(p => (
               <tr key={p.product_id}>
-                <td className={styles.idCell}>PRD-{String(p.product_id).padStart(3,'0')}</td>
+                <td className={styles.idCell}>PRD-{String(p.product_id).padStart(3, '0')}</td>
                 <td><strong>{p.product_name}</strong></td>
                 <td><span className="badge badge-blue">{p.category}</span></td>
                 <td>{p.brand}</td>
-                <td style={{ color:'var(--primary)', fontWeight:700 }}>₹{Number(p.price).toLocaleString('en-IN')}</td>
+                <td style={{ color: 'var(--primary)', fontWeight: 700 }}>₹{Number(p.price).toLocaleString('en-IN')}</td>
                 <td style={{ color: p.stock_quantity > 20 ? 'var(--accent)' : 'var(--red)' }}>{p.stock_quantity}</td>
                 <td><StatusBadge s={p.is_active ? 'active' : 'inactive'} /></td>
                 <td>
-                  <button className={styles.actionBtn} onClick={() => toast(`Editing ${p.product_name}`, '✏️')}>Edit</button>
+                  <button className={styles.actionBtn} onClick={() => handleViewProduct(p.product_id)}>
+                    View
+                  </button>
                 </td>
               </tr>
             ))}
@@ -365,17 +571,17 @@ const handleLogout = () => {
 
         {/* ─── ORDERS ─── */}
         {tab === 'Orders' && (
-          <DataTable loading={loading} heads={['Order ID','Customer','System','Amount','Date','Status','Invoice']}>
+          <DataTable loading={loading} heads={['Order ID', 'Customer', 'System', 'Amount', 'Date', 'Status', 'Action']}>
             {data.orders?.map(o => (
               <tr key={o.order_id}>
-                <td className={styles.idCell} style={{ color:'var(--primary)' }}>ORD-{String(o.order_id).padStart(3,'0')}</td>
+                <td className={styles.idCell} style={{ color: 'var(--primary)' }}>ORD-{String(o.order_id).padStart(3, '0')}</td>
                 <td><strong>{o.customer_name}</strong></td>
                 <td>{o.system_size_kw ? `${o.system_size_kw} kW` : 'AMC'}</td>
-                <td style={{ fontWeight:700 }}>₹{Number(o.total_amount).toLocaleString('en-IN')}</td>
-                <td className={styles.mutedCell}>{o.order_date?.slice(0,10)}</td>
+                <td style={{ fontWeight: 700 }}>₹{Number(o.total_amount).toLocaleString('en-IN')}</td>
+                <td className={styles.mutedCell}>{o.order_date?.slice(0, 10)}</td>
                 <td><StatusBadge s={o.status} /></td>
                 <td>
-                  <button className={styles.actionBtn} onClick={() => toast(`Invoice ORD-${o.order_id} generated`, '📄')}>Invoice</button>
+                  <button className={styles.actionBtn} onClick={() => handleViewOrder(o.order_id)}>View</button>
                 </td>
               </tr>
             ))}
@@ -384,15 +590,15 @@ const handleLogout = () => {
 
         {/* ─── INSTALLATIONS ─── */}
         {tab === 'Installations' && (
-          <DataTable loading={loading} heads={['ID','Customer','City','Capacity','Technician','Completion','Status']}>
+          <DataTable loading={loading} heads={['ID', 'Customer', 'City', 'Capacity', 'Technician', 'Completion', 'Status']}>
             {data.installations?.map(i => (
               <tr key={i.installation_id}>
-                <td className={styles.idCell}>INST-{String(i.installation_id).padStart(3,'0')}</td>
+                <td className={styles.idCell}>INST-{String(i.installation_id).padStart(3, '0')}</td>
                 <td><strong>{i.customer_name}</strong></td>
                 <td>{i.city}</td>
-                <td style={{ color:'var(--accent)', fontWeight:600 }}>{i.total_kw} kW</td>
+                <td style={{ color: 'var(--accent)', fontWeight: 600 }}>{i.total_kw} kW</td>
                 <td>{i.technician_name}</td>
-                <td className={styles.mutedCell}>{i.completion_date?.slice(0,10) || '—'}</td>
+                <td className={styles.mutedCell}>{i.completion_date?.slice(0, 10) || '—'}</td>
                 <td><StatusBadge s={i.status} /></td>
               </tr>
             ))}
@@ -401,15 +607,15 @@ const handleLogout = () => {
 
         {/* ─── PAYMENTS ─── */}
         {tab === 'Payments' && (
-          <DataTable loading={loading} heads={['Pay ID','Order','Customer','Amount','Method','Date','Status']}>
+          <DataTable loading={loading} heads={['Pay ID', 'Order', 'Customer', 'Amount', 'Method', 'Date', 'Status']}>
             {data.payments?.map(p => (
               <tr key={p.payment_id}>
-                <td className={styles.idCell} style={{ color:'var(--primary)' }}>PAY-{String(p.payment_id).padStart(3,'0')}</td>
-                <td>ORD-{String(p.order_id).padStart(3,'0')}</td>
+                <td className={styles.idCell} style={{ color: 'var(--primary)' }}>PAY-{String(p.payment_id).padStart(3, '0')}</td>
+                <td>ORD-{String(p.order_id).padStart(3, '0')}</td>
                 <td><strong>{p.customer_name}</strong></td>
-                <td style={{ fontWeight:700 }}>₹{Number(p.amount).toLocaleString('en-IN')}</td>
+                <td style={{ fontWeight: 700 }}>₹{Number(p.amount).toLocaleString('en-IN')}</td>
                 <td><span className="badge badge-blue">{p.method?.toUpperCase()}</span></td>
-                <td className={styles.mutedCell}>{p.payment_date?.slice(0,10)}</td>
+                <td className={styles.mutedCell}>{p.payment_date?.slice(0, 10)}</td>
                 <td><StatusBadge s={p.status} /></td>
               </tr>
             ))}
@@ -418,19 +624,24 @@ const handleLogout = () => {
 
         {/* ─── ENQUIRIES ─── */}
         {tab === 'Enquiries' && (
-          <DataTable loading={loading} heads={['ID','Name','Email','Phone','City','Service','Bill/mo','Date','Responded']}>
+          <DataTable loading={loading} heads={['ID', 'Name', 'Email', 'Phone', 'City', 'Service', 'Amount/Bill', 'Date', 'Responded']}>
             {data.enquiries?.map(e => (
               <tr key={e.enquiry_id}>
-                <td className={styles.idCell}>ENQ-{String(e.enquiry_id).padStart(3,'0')}</td>
+                <td className={styles.idCell}>ENQ-{String(e.enquiry_id).padStart(3, '0')}</td>
                 <td><strong>{e.name}</strong></td>
                 <td className={styles.mutedCell}>{e.email}</td>
                 <td>{e.phone}</td>
-                <td>{e.city}</td>
-                <td style={{ fontSize:'0.8rem' }}>{e.service_type}</td>
-                <td style={{ color:'var(--primary)' }}>₹{Number(e.monthly_bill||0).toLocaleString('en-IN')}</td>
-                <td className={styles.mutedCell}>{e.submitted_at?.slice(0,10)}</td>
+                <td>{e.city || '—'}</td>
+                <td style={{ fontSize: '0.8rem' }}>{e.service_type}</td>
+                <td style={{ color: 'var(--primary)' }}>
+                  {e.monthly_bill ? `₹${Number(e.monthly_bill).toLocaleString('en-IN')}` : '—'}
+                </td>
+                <td className={styles.mutedCell}>{e.submitted_at?.slice(0, 10)}</td>
                 <td>
                   <StatusBadge s={e.is_responded ? 'completed' : 'pending'} />
+                </td>
+                <td>
+                  <button className={styles.actionBtn} onClick={() => handleViewEnquiry(e.enquiry_id)}>View</button>
                 </td>
               </tr>
             ))}
@@ -438,19 +649,444 @@ const handleLogout = () => {
         )}
       </main>
 
+      {/* CUSTOMER MODAL */}
+      {viewCustomer && (
+        <div className={styles.overlay} onClick={() => setViewCustomer(null)}>
+          <div className={styles.modal} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHead}>
+              <h3>👤 Customer Details</h3>
+              <button className={styles.closeBtn} onClick={() => setViewCustomer(null)}>✕</button>
+            </div>
+
+            <div className={styles.modalBody}>
+              <div className={styles.formGrid}>
+                <div className={styles.mField}>
+                  <label>Name</label>
+                  <input value={viewCustomer.name || ''} readOnly />
+                </div>
+                <div className={styles.mField}>
+                  <label>Email</label>
+                  <input value={viewCustomer.email || ''} readOnly />
+                </div>
+                <div className={styles.mField}>
+                  <label>Phone</label>
+                  <input value={viewCustomer.phone || ''} readOnly />
+                </div>
+                <div className={styles.mField}>
+                  <label>Address</label>
+                  <input value={viewCustomer.address || ''} readOnly />
+                </div>
+                <div className={styles.mField}>
+                  <label>City</label>
+                  <input value={viewCustomer.city || ''} readOnly />
+                </div>
+                <div className={styles.mField}>
+                  <label>Pincode</label>
+                  <input value={viewCustomer.pincode || ''} readOnly />
+                </div>
+                <div className={styles.mField}>
+                  <label>Property Type</label>
+                  <input value={viewCustomer.property_type || ''} readOnly />
+                </div>
+              </div>
+
+              <div className={styles.modalActions}>
+                <button
+                  className="btn-outline"
+                  style={{ color: 'red' }}
+                  onClick={() => handleDeleteCustomer(viewCustomer.customer_id)}
+                >
+                  Delete
+                </button>
+                <button
+                  className="btn-primary"
+                  onClick={() => {
+                    setAddModal({
+                      title: "Edit Customer",
+                      fields: [
+                        { key: 'name', label: 'Full Name' },
+                        { key: 'email', label: 'Email' },
+                        { key: 'phone', label: 'Phone' },
+                        { key: 'address', label: 'Address' },
+                        { key: 'pincode', label: 'Pincode' },
+                        { key: 'city', label: 'City' },
+                        { key: 'property_type', label: 'Property Type', type: 'select', options: ['residential', 'commercial', 'industrial'] },
+                      ],
+                      initialData: viewCustomer,
+                      onSave: async (rec) => {
+                        try {
+                          await api.put(`/customers/${viewCustomer.customer_id}`, rec)
+                          toast("Updated ✅")
+                          setViewCustomer(null)
+                          fetchAllData()
+                        } catch (err) {
+                          toast("Update failed ❌")
+                        }
+                      }
+                    })
+                  }}
+                >
+                  Edit
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SUPPLIER MODAL */}
+      {viewSupplier && (
+        <div className={styles.overlay} onClick={() => setViewSupplier(null)}>
+          <div className={styles.modal} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHead}>
+              <h3>🏭 Supplier Details</h3>
+              <button className={styles.closeBtn} onClick={() => setViewSupplier(null)}>✕</button>
+            </div>
+
+            <div className={styles.modalBody}>
+              <div className={styles.formGrid}>
+                <div className={styles.mField}>
+                  <label>Company</label>
+                  <input value={viewSupplier.company_name || ''} readOnly />
+                </div>
+                <div className={styles.mField}>
+                  <label>Contact Person</label>
+                  <input value={viewSupplier.contact_person || ''} readOnly />
+                </div>
+                <div className={styles.mField}>
+                  <label>Email</label>
+                  <input value={viewSupplier.email || ''} readOnly />
+                </div>
+                <div className={styles.mField}>
+                  <label>Phone</label>
+                  <input value={viewSupplier.phone || ''} readOnly />
+                </div>
+                <div className={styles.mField}>
+                  <label>City</label>
+                  <input value={viewSupplier.city || ''} readOnly />
+                </div>
+                <div className={styles.mField}>
+                  <label>GST Number</label>
+                  <input value={viewSupplier.gst_number || ''} readOnly />
+                </div>
+              </div>
+
+              <div className={styles.modalActions}>
+                <button
+                  className="btn-outline"
+                  style={{
+                    color: viewSupplier.products?.length ? 'gray' : 'red',
+                    cursor: viewSupplier.products?.length ? 'not-allowed' : 'pointer'
+                  }}
+                  disabled={viewSupplier.products?.length > 0}
+                  onClick={() => handleDeleteSupplier(viewSupplier.supplier_id)}
+                >
+                  Delete
+                </button>
+                <button
+                  className="btn-primary"
+                  onClick={() => {
+                    setAddModal({
+                      title: "Edit Supplier",
+                      fields: [
+                        { key: 'company_name', label: 'Company Name' },
+                        { key: 'contact_person', label: 'Contact Person' },
+                        { key: 'email', label: 'Email' },
+                        { key: 'phone', label: 'Phone' },
+                        { key: 'city', label: 'City' },
+                        { key: 'gst_number', label: 'GST Number' },
+                      ],
+                      initialData: viewSupplier,
+                      onSave: async (rec) => {
+                        try {
+                          await api.put(`/suppliers/${viewSupplier.supplier_id}`, rec)
+                          toast("Updated ✅")
+                          setViewSupplier(null)
+                          fetchAllData()
+                        } catch (err) {
+                          toast("Update failed ❌")
+                        }
+                      }
+                    })
+                  }}
+                >
+                  Edit
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* PRODUCT MODAL */}
+      {viewProduct && (
+        <div className={styles.overlay} onClick={() => setViewProduct(null)}>
+          <div className={styles.modal} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHead}>
+              <h3>📦 Product Details</h3>
+              <button className={styles.closeBtn} onClick={() => setViewProduct(null)}>✕</button>
+            </div>
+
+            <div className={styles.modalBody}>
+              <div className={styles.formGrid}>
+                <div className={styles.mField}>
+                  <label>Product Name</label>
+                  <input value={viewProduct.product_name || ''} readOnly />
+                </div>
+                <div className={styles.mField}>
+                  <label>Category</label>
+                  <input value={viewProduct.category || ''} readOnly />
+                </div>
+                <div className={styles.mField}>
+                  <label>Brand</label>
+                  <input value={viewProduct.brand || ''} readOnly />
+                </div>
+                <div className={styles.mField}>
+                  <label>Price</label>
+                  <input value={viewProduct.price || ''} readOnly />
+                </div>
+                <div className={styles.mField}>
+                  <label>Stock</label>
+                  <input value={viewProduct.stock_quantity || ''} readOnly />
+                </div>
+                <div className={styles.mField}>
+                  <label>Status</label>
+                  <input value={viewProduct.is_active ? 'Active' : 'Inactive'} readOnly />
+                </div>
+              </div>
+
+              <div className={styles.modalActions}>
+                <button
+                  className="btn-outline"
+                  style={{ color: 'red' }}
+                  onClick={() => handleDeleteProduct(viewProduct.product_id)}
+                >
+                  Delete
+                </button>
+                <button
+                  className="btn-primary"
+                  onClick={() => {
+                    setAddModal({
+                      title: "Edit Product",
+                      fields: [
+                        { key: 'product_name', label: 'Product Name' },
+                        { key: 'category', label: 'Category' },
+                        { key: 'brand', label: 'Brand' },
+                        { key: 'price', label: 'Price', type: 'number' },
+                        { key: 'stock_quantity', label: 'Stock', type: 'number' },
+                        { key: 'is_active', label: 'Status', type: 'select', options: [true, false] },
+                      ],
+                      initialData: viewProduct,
+                      onSave: async (rec) => {
+                        try {
+                          await api.put(`/products/${viewProduct.product_id}`, rec)
+                          toast("Updated ✅")
+                          setViewProduct(null)
+                          fetchAllData()
+                        } catch (err) {
+                          toast("Update failed ❌")
+                        }
+                      }
+                    })
+                  }}
+                >
+                  Edit
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ORDER MODAL */}
+      {viewOrder && (
+        <div className={styles.overlay} onClick={() => setViewOrder(null)}>
+          <div className={styles.modal} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHead}>
+              <h3>🛒 Order Details</h3>
+              <button className={styles.closeBtn} onClick={() => setViewOrder(null)}>✕</button>
+            </div>
+            <div className={styles.modalBody}>
+              <div className={styles.formGrid}>
+                <div className={styles.mField}>
+                  <label>Order ID</label>
+                  <input value={`ORD-${String(viewOrder.order_id).padStart(3, '0')}`} readOnly />
+                </div>
+                <div className={styles.mField}>
+                  <label>Customer</label>
+                  <input value={viewOrder.customer_name || ''} readOnly />
+                </div>
+                <div className={styles.mField}>
+                  <label>Amount (₹)</label>
+                  <input value={viewOrder.total_amount || ''} readOnly />
+                </div>
+                <div className={styles.mField}>
+                  <label>Status</label>
+                  <input value={viewOrder.status || ''} readOnly />
+                </div>
+              </div>
+              <div className={styles.modalActions}>
+                <button
+                  className="btn-outline"
+                  style={{ color: 'red' }}
+                  onClick={() => handleDeleteOrder(viewOrder.order_id)}
+                >
+                  Delete
+                </button>
+
+                <button
+                  className="btn-outline"
+                  onClick={() => generateInvoice(viewOrder)}
+                >
+                  Download Invoice
+                </button>
+
+                {viewOrder.status !== 'confirmed' && viewOrder.status !== 'completed' && viewOrder.status !== 'installed' && (
+                  <button
+                    className="btn-primary"
+                    onClick={async () => {
+                      try {
+                        // Initialize payment
+                        const { data } = await api.post('/razorpay/init', {
+                          order_id: viewOrder.order_id,
+                          amount: viewOrder.total_amount,
+                          customer_id: viewOrder.customer_id,
+                          description: `Order ${viewOrder.order_id}`
+                        });
+
+                        const options = {
+                          key: data.data.key_id || 'rzp_test_YOUR_KEY',
+                          amount: data.data.amount * 100,
+                          currency: "INR",
+                          name: "SolarTech Pro",
+                          description: `Payment for ORD-${viewOrder.order_id}`,
+                          order_id: data.data.razorpay_order_id,
+                          handler: async function (response) {
+                            try {
+                              console.log("PAYMENT RESPONSE:", response)
+
+                              const verifyRes = await api.post('/razorpay/verify', {
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature: response.razorpay_signature,
+                                order_id: viewOrder.order_id,
+                                customer_id: viewOrder.customer_id,
+                                amount: viewOrder.total_amount
+                              })
+
+                              console.log("VERIFY RESPONSE:", verifyRes.data)
+                              toast('Payment Successful ✅')
+
+                              // Refresh orders
+                              fetchAllData()
+
+                              // Close modal
+                              setViewOrder(null)
+
+                            } catch (err) {
+                              console.log("VERIFY ERROR:", err.response?.data || err)
+                              toast('Payment verification failed ❌')
+                            }
+                          }
+                        };
+
+                        // Initialize Razorpay
+                        if (window.Razorpay) {
+                          const rzp = new window.Razorpay(options);
+                          rzp.open();
+                        }
+                      } catch (err) {
+                        console.error(err)
+                        toast('Payment initialization failed ❌')
+                      }
+                    }}
+                  >
+                    Pay Now (Razorpay)
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ENQUIRY MODAL */}
+      {viewEnquiry && (
+        <div className={styles.overlay} onClick={() => setViewEnquiry(null)}>
+          <div className={styles.modal} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHead}>
+              <h3>📩 Enquiry Details</h3>
+              <button className={styles.closeBtn} onClick={() => setViewEnquiry(null)}>✕</button>
+            </div>
+            <div className={styles.modalBody}>
+              <div className={styles.formGrid}>
+                <div className={styles.mField}>
+                  <label>Name</label>
+                  <input value={viewEnquiry.name || ''} readOnly />
+                </div>
+                <div className={styles.mField}>
+                  <label>Email</label>
+                  <input value={viewEnquiry.email || ''} readOnly />
+                </div>
+                <div className={styles.mField}>
+                  <label>Phone</label>
+                  <input value={viewEnquiry.phone || ''} readOnly />
+                </div>
+                <div className={styles.mField}>
+                  <label>Service Type</label>
+                  <input value={viewEnquiry.service_type || ''} readOnly />
+                </div>
+                <div className={styles.mField}>
+                  <label>Monthly Bill</label>
+                  <input value={viewEnquiry.monthly_bill || ''} readOnly />
+                </div>
+                <div className={styles.mField}>
+                  <label>Status</label>
+                  <input value={viewEnquiry.is_responded ? 'Completed' : 'Pending'} readOnly />
+                </div>
+              </div>
+              <div className={styles.modalActions}>
+                <button
+                  className="btn-outline"
+                  style={{ color: 'red' }}
+                  onClick={() => handleDeleteEnquiry(viewEnquiry.enquiry_id)}
+                >
+                  Delete
+                </button>
+
+                <button
+                  className="btn-primary"
+                  onClick={async () => {
+                    try {
+                      await api.patch(`/enquiries/${viewEnquiry.enquiry_id}/respond`, { assigned_to: 'Admin' });
+                      toast('Enquiry status updated! ✅');
+                      setViewEnquiry(null);
+                      fetchAllData();
+                    } catch (err) {
+                      toast('Failed to update enquiry ❌');
+                    }
+                  }}
+                >
+                  Toggle Status
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Add Modal */}
       {addModal && (
         <AddModal
-          {...addModal}
+          title={addModal.title}
+          fields={addModal.fields}
+          initialData={addModal.initialData}
           onClose={() => setAddModal(null)}
-          onSave={rec => { addModal.onSave(rec); toast('Record added successfully!', '✅') }}
+          onSave={(rec) => {
+            addModal.onSave(rec);
+          }}
         />
       )}
     </div>
   )
-}
-
-function tabIcon(t) {
-  const icons = { Dashboard:'📊', Customers:'👥', Suppliers:'🏭', Products:'📦', Orders:'🛒', Installations:'🔧', Payments:'💳', Enquiries:'📩' }
-  return icons[t] || '📋'
 }

@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import styles from './StatsBar.module.css'
 
 const STATS = [
-  { target: 2500, suffix: '+',    label: 'Happy Customers' },
-  { target: 45,   prefix: '₹',   suffix: 'Cr+', label: 'Bills Saved' },
-  { target: 15,   suffix: 'MW+', label: 'Capacity Installed' },
-  { target: 12,   suffix: 'K+',  label: 'Tonnes CO₂ Avoided' },
-  { target: 25,   suffix: ' Yr', label: 'Panel Warranty' },
+  { target: 250, suffix: '+', label: 'Happy Customers' },
+  { target: 1, prefix: '₹', suffix: 'Cr+', label: 'Bills Saved' },
+  { target: 15, suffix: 'MW+', label: 'Capacity Installed' },
+  { target: 12, suffix: 'K+', label: 'Tonnes CO₂ Avoided' },
+  { target: 7, suffix: ' Yr', label: 'Panel Warranty' },
 ]
 
 function Counter({ target, prefix = '', suffix = '' }) {

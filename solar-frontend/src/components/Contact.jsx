@@ -57,9 +57,9 @@ export default function Contact() {
             </p>
 
             {[
-              { icon: '📍', label: 'Address',   val: 'Plot 45, Solar Park, MIDC Nagpur, Maharashtra 440018' },
+              { icon: '📍', label: 'Address',   val: 'Plot 45, Solar Park, Dhayri Pune, Maharashtra 411041' },
               { icon: '📞', label: 'Call Us',   val: '+91 98765 43210' },
-              { icon: '✉',  label: 'Email',     val: 'info@solartechpro.in' },
+              { icon: '✉',  label: 'Email',     val: 'info@ardourgreenenergy.in' },
               { icon: '🕐', label: 'Hours',     val: 'Mon–Sat: 9:00 AM – 6:00 PM' },
             ].map(item => (
               <div key={item.label} className={styles.infoItem}>
