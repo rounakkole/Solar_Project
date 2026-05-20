@@ -174,7 +174,7 @@ router.post('/verify', auth, async (req, res) => {
     )
 
     if (req.io) {
-      req.io.emit('dashboard_update')
+      req.io?.emit('dashboard_update')
     }
 
     res.json({

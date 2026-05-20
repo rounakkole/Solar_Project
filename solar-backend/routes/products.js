@@ -81,7 +81,7 @@ router.post('/', auth, async (req, res) => {
     )
     
     // Broadcast product addition
-    req.io.emit('product_added', {
+    req.io?.emit('product_added', {
       product_id: result.insertId,
       product_name,
       stock_quantity: stock_quantity || 0
@@ -92,7 +92,7 @@ router.post('/', auth, async (req, res) => {
       message: 'Product created',
       insertId: result.insertId 
     })
-    req.io.emit('dashboard_update');   // 🔥 ADD
+    req.io?.emit('dashboard_update');   // 🔥 ADD
   } catch (err) {
     res.status(500).json({ success: false, message: err.message })
   }
@@ -142,7 +142,7 @@ router.patch('/:id/stock', auth, async (req, res) => {
     const stockStatus = newQty > 20 ? 'in_stock' : (newQty > 0 ? 'low_stock' : 'out_of_stock')
     
     // Broadcast stock update in real-time
-    req.io.to(`product_${req.params.id}`).emit('stock_updated', {
+    req.io?.to(`product_${req.params.id}`).emit('stock_updated', {
       product_id: req.params.id,
       product_name: current[0].product_name,
       old_quantity: oldQty,
@@ -153,7 +153,7 @@ router.patch('/:id/stock', auth, async (req, res) => {
     
     // Alert if stock is low
     if (newQty <= 5 && newQty > 0) {
-      req.io.emit('low_stock_alert', {
+      req.io?.emit('low_stock_alert', {
         product_id: req.params.id,
         product_name: current[0].product_name,
         stock_quantity: newQty
@@ -162,7 +162,7 @@ router.patch('/:id/stock', auth, async (req, res) => {
     
     // Alert if out of stock
     if (newQty === 0 && oldQty > 0) {
-      req.io.emit('out_of_stock_alert', {
+      req.io?.emit('out_of_stock_alert', {
         product_id: req.params.id,
         product_name: current[0].product_name
       })
@@ -185,23 +185,31 @@ router.patch('/:id/stock', auth, async (req, res) => {
 
 // PUT full update product
 router.put('/:id', auth, async (req, res) => {
-  const { product_name, price, mrp, stock_quantity, description, is_active } = req.body
+  const { product_name, price, mrp, stock_quantity, description, is_active, category, brand } = req.body
   try {
-    await db.query(
-      `UPDATE products SET product_name=?, price=?, mrp=?, stock_quantity=?, description=?, is_active=?
-       WHERE product_id=?`,
-      [product_name, price, mrp, stock_quantity, description, is_active, req.params.id]
-    )
-    
+    // Build dynamic update — only set fields that were actually sent
+    const fields = []
+    const values = []
+
+    if (product_name  !== undefined) { fields.push('product_name=?');   values.push(product_name) }
+    if (category      !== undefined) { fields.push('category=?');        values.push(category) }
+    if (brand         !== undefined) { fields.push('brand=?');           values.push(brand) }
+    if (price         !== undefined) { fields.push('price=?');           values.push(price) }
+    if (mrp           !== undefined) { fields.push('mrp=?');             values.push(mrp) }
+    if (stock_quantity !== undefined){ fields.push('stock_quantity=?');  values.push(stock_quantity) }
+    if (description   !== undefined) { fields.push('description=?');     values.push(description) }
+    if (is_active     !== undefined) { fields.push('is_active=?');       values.push(is_active ? 1 : 0) }
+
+    if (!fields.length) {
+      return res.status(400).json({ success: false, message: 'No fields to update' })
+    }
+
+    values.push(req.params.id)
+    await db.query(`UPDATE products SET ${fields.join(', ')} WHERE product_id=?`, values)
+
     // Broadcast product update
-    req.io.emit('product_updated', {
-      product_id: req.params.id,
-      product_name,
-      price,
-      stock_quantity,
-      is_active
-    })
-    
+    req.io?.emit('product_updated', { product_id: req.params.id, product_name, price, stock_quantity, is_active })
+
     res.json({ success: true, message: 'Product updated' })
   } catch (err) {
     res.status(500).json({ success: false, message: err.message })
@@ -223,7 +231,7 @@ router.delete('/:id', auth, async (req, res) => {
     await db.query('DELETE FROM products WHERE product_id = ?', [req.params.id])
     
     // Broadcast product deletion
-    req.io.emit('product_deleted', {
+    req.io?.emit('product_deleted', {
       product_id: req.params.id,
       product_name: product[0].product_name
     })

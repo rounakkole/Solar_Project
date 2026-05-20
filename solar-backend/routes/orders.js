@@ -57,7 +57,7 @@ router.post('/', async (req, res) => {
   if (!customer_id || !total_amount) {
     return res.status(400).json({ message: 'customer_id and total_amount are required' })
   }
-  const conn = await db.getConnection()
+  const conn = await db.pool.getConnection()
   try {
     await conn.beginTransaction()
     const [result] = await conn.query(
@@ -83,7 +83,7 @@ router.post('/', async (req, res) => {
     }
 
     await conn.commit()
-    req.io.emit('dashboard_update');
+    req.io?.emit('dashboard_update');
 
     // Send confirmation email
     const [cust] = await db.query('SELECT * FROM customers WHERE customer_id = ?', [customer_id])

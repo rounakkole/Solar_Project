@@ -78,7 +78,7 @@ router.post('/add', auth, async (req, res) => {
     })
   }
   
-  const conn = await db.getConnection()
+  const conn = await db.pool.getConnection()
   try {
     await conn.beginTransaction()
     

@@ -149,7 +149,7 @@ router.post('/products', auth, adminOnly, async (req, res) => {
        warranty_years||10, price, mrp||price, stock_quantity||0, description]
     )
     
-    req.io.emit('product_added', { product_id: result.insertId, product_name })
+    req.io?.emit('product_added', { product_id: result.insertId, product_name })
     
     res.status(201).json({ success: true, message: 'Product created', insertId: result.insertId })
   } catch (err) {
@@ -167,7 +167,7 @@ router.put('/products/:id', auth, adminOnly, async (req, res) => {
       [product_name, price, mrp, stock_quantity, description, is_active, req.params.id]
     )
     
-    req.io.emit('product_updated', { product_id: req.params.id, product_name })
+    req.io?.emit('product_updated', { product_id: req.params.id, product_name })
     res.json({ success: true, message: 'Product updated' })
   } catch (err) {
     res.status(500).json({ success: false, message: err.message })
@@ -177,7 +177,7 @@ router.put('/products/:id', auth, adminOnly, async (req, res) => {
 router.delete('/products/:id', auth, adminOnly, async (req, res) => {
   try {
     await db.query('DELETE FROM products WHERE product_id = ?', [req.params.id])
-    req.io.emit('product_deleted', { product_id: req.params.id })
+    req.io?.emit('product_deleted', { product_id: req.params.id })
     res.json({ success: true, message: 'Product deleted' })
   } catch (err) {
     res.status(500).json({ success: false, message: err.message })
@@ -296,7 +296,7 @@ router.patch('/orders/:id/status', auth, adminOnly, async (req, res) => {
   
   try {
     await db.query('UPDATE orders SET status = ? WHERE order_id = ?', [status, req.params.id])
-    req.io.emit('order_status_updated', { order_id: req.params.id, status })
+    req.io?.emit('order_status_updated', { order_id: req.params.id, status })
     res.json({ success: true, message: 'Order status updated' })
   } catch (err) {
     res.status(500).json({ success: false, message: err.message })
@@ -385,3 +385,6 @@ router.get('/payments', auth, adminOnly, async (req, res) => {
 })
 
 module.exports = router
+
+
+const axios = require('axios')

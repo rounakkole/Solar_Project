@@ -54,7 +54,7 @@ router.post('/', async (req, res) => {
     }
 
     if (req.io) {
-      req.io.emit('dashboard_update');
+      req.io?.emit('dashboard_update');
     }
 
     res.status(201).json({

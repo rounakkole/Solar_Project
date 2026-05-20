@@ -85,7 +85,7 @@ router.post('/', auth, async (req, res) => {
     })
   }
   
-  const conn = await db.getConnection()
+  const conn = await db.pool.getConnection()
   try {
     await conn.beginTransaction()
     
@@ -178,7 +178,7 @@ router.post('/:id/convert', auth, async (req, res) => {
     })
   }
   
-  const conn = await db.getConnection()
+  const conn = await db.pool.getConnection()
   try {
     await conn.beginTransaction()
     

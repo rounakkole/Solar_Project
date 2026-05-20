@@ -46,6 +46,12 @@ io.on("connection", (socket) => {
   });
 });
 
+// ✅ Attach io to every request so routes can use req.io
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
 // ✅ Import and register routes
 const productRoutes = require("./routes/products");
 const cartRoutes = require("./routes/cart");
@@ -136,5 +142,3 @@ process.on('SIGTERM', () => {
     process.exit(0)
   })
 })
-
-

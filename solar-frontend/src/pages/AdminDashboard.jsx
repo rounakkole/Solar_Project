@@ -61,11 +61,21 @@ function AddModal({ title, fields, onSave, onClose, initialData }) {
                 {f.type === 'select'
                   ? (
                     <select
-                      value={form[f.key] || ''}
-                      onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
+                      value={form[f.key] ?? ''}
+                      onChange={e => {
+                        let val = e.target.value
+                        if (val === 'true') val = true
+                        else if (val === 'false') val = false
+                        setForm(p => ({ ...p, [f.key]: val }))
+                      }}
                     >
                       <option value="">Select</option>
-                      {f.options?.map(o => <option key={o}>{o}</option>)}
+                      {f.options?.map(o => {
+                        const isObj = o !== null && typeof o === 'object'
+                        const val = isObj ? o.value : o
+                        const label = isObj ? o.label : String(o)
+                        return <option key={String(val)} value={String(val)}>{label}</option>
+                      })}
                     </select>
                   )
                   : (
@@ -85,8 +95,8 @@ function AddModal({ title, fields, onSave, onClose, initialData }) {
             <button className="btn-outline" onClick={onClose}>Cancel</button>
             <button
               className="btn-primary"
-              onClick={() => {
-                onSave(form)
+              onClick={async () => {
+                await onSave(form)
                 onClose()
               }}
             >
@@ -129,6 +139,7 @@ export default function AdminDashboard() {
   const [viewEnquiry, setViewEnquiry] = useState(null)
   const [viewInstallation, setViewInstallation] = useState(null)
   const [viewPayment, setViewPayment] = useState(null)
+  const [orderPaymentMethod, setOrderPaymentMethod] = useState(null) // null | 'upi' | 'card'
 
   const handleViewCustomer = async (id) => {
     try {
@@ -181,7 +192,7 @@ export default function AdminDashboard() {
       const [cust, supp, prod, ord, inst, pay, enq] = await Promise.all([
         api.get('/customers'),
         api.get('/suppliers'),
-        api.get('/products'),
+        api.get('/admin/products'),
         api.get('/orders'),
         api.get('/installations'),
         api.get('/payments'),
@@ -229,48 +240,64 @@ export default function AdminDashboard() {
     window.location.href = "/login";
   };
 
-  const handleDeleteCustomer = async (id) => {
-    const confirm = window.confirm("Are you sure you want to delete this customer?")
-    if (!confirm) return
-
-    try {
-      await api.delete(`/customers/${id}`)
-      toast("Customer deleted 🗑")
-      fetchAllData()
-    } catch (err) {
-      console.error(err)
-      toast("Cannot delete: Linked data exists ❌")
-    }
-  }
-
-  const handleViewSupplier = async (id) => {
-    try {
-      const res = await api.get(`/suppliers/${id}`)
-      setViewSupplier(res.data)
-    } catch (err) {
-      console.error(err)
-      toast("Error loading supplier ❌")
-    }
-  }
-
   const handleDeleteSupplier = async (id) => {
-    const confirm = window.confirm("Are you sure you want to delete this supplier?")
-    if (!confirm) return
 
-    try {
-      await api.delete(`/suppliers/${id}`)
-      toast("Supplier deleted 🗑")
-      fetchAllData()
-    } catch (err) {
-      console.error(err)
-      toast("Cannot delete: Linked products exist ❌")
-    }
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this supplier?"
+  )
+
+  if (!confirmDelete) return
+
+  try {
+
+    const token = localStorage.getItem("token")
+
+    const res = await api.delete(`/suppliers/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+
+    console.log("DELETE RESPONSE:", res.data)
+
+    toast("Supplier deleted successfully ✅")
+
+    setViewSupplier(null)
+
+    fetchAllData()
+
+  } catch (err) {
+
+    console.log("DELETE ERROR:", err.response?.data || err)
+
+    toast("Delete failed ❌")
   }
+}
+
+ const handleViewSupplier = async (id) => {
+
+  try {
+
+    const res = await api.get(`/suppliers/${id}`)
+
+    console.log("SUPPLIER RESPONSE:", res.data)
+
+    if (res.data) {
+      setViewSupplier(res.data)
+    }
+
+  } catch (err) {
+
+    console.log("SUPPLIER ERROR:", err)
+
+    toast("Error loading supplier ❌")
+  }
+}
 
   const handleViewProduct = async (id) => {
     try {
       const res = await api.get(`/products/${id}`)
-      setViewProduct(res.data)
+      setViewProduct(res.data?.data || res.data)
     } catch (err) {
       console.error(err)
       toast("Error loading product ❌")
@@ -358,28 +385,135 @@ export default function AdminDashboard() {
           await api.post('/customers', rec)
           const res = await api.get('/customers')
           setData(d => ({ ...d, customers: res.data }))
+          toast("Customer added successfully! ✅", '👥')
         } catch (err) {
           console.error(err)
-          toast("Error adding customer ❌")
+          const msg = err.response?.data?.message || "Error adding customer"
+          toast(`${msg} ❌`)
         }
       }
     },
 
+Suppliers: {
+  title: 'Add Supplier',
+
+  fields: [
+    {
+      key: 'company_name',
+      label: 'Company Name',
+      placeholder: 'Exide Industries'
+    },
+
+    {
+      key: 'contact_person',
+      label: 'Contact Person',
+      placeholder: 'Mr. Roy'
+    },
+
+    {
+      key: 'email',
+      label: 'Email',
+      placeholder: 'supplier@email.com'
+    },
+
+    {
+      key: 'phone',
+      label: 'Phone',
+      placeholder: '9876543210'
+    },
+
+    {
+      key: 'address',
+      label: 'Address',
+      placeholder: 'Full Address'
+    },
+
+    {
+      key: 'city',
+      label: 'City',
+      placeholder: 'Pune'
+    },
+
+    {
+      key: 'gst_number',
+      label: 'GST Number',
+      placeholder: '27ABCDE1234F1Z5'
+    },
+
+    {
+      key: 'pan_number',
+      label: 'PAN Number',
+      placeholder: 'ABCDE1234F'
+    }
+  ],
+
+  onSave: async (rec) => {
+
+    try {
+
+      const token = localStorage.getItem("token")
+
+      await api.post('/suppliers', rec, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+
+      const res = await api.get('/suppliers')
+
+      setData(d => ({
+        ...d,
+        suppliers: res.data
+      }))
+
+      toast("Supplier added successfully ✅")
+
+    } catch (err) {
+
+      console.log(err)
+
+      toast(
+        err.response?.data?.message ||
+        "Failed to add supplier ❌"
+      )
+    }
+  }
+},
+
+
+
+
+
+
+
+
+
+
+
+
     Orders: {
       title: 'New Order',
       fields: [
-        { key: 'customer_id', label: 'Customer ID', placeholder: '1' },
+        { key: 'customer_id', label: 'Customer', type: 'select',
+          options: (data.customers || []).map(c => ({ label: `${c.name} (ID: ${c.customer_id})`, value: c.customer_id })) },
         { key: 'system_size_kw', label: 'System Size (kW)', type: 'number', placeholder: '5' },
         { key: 'total_amount', label: 'Total Amount (₹)', type: 'number', placeholder: '247000' },
       ],
       onSave: async (rec) => {
         try {
-          await api.post('/orders', rec)
+          await api.post('/orders', {
+            ...rec,
+            customer_id: Number(rec.customer_id),
+            system_size_kw: Number(rec.system_size_kw) || 0,
+            total_amount: Number(rec.total_amount),
+          })
           const res = await api.get('/orders')
           setData(d => ({ ...d, orders: res.data }))
+          toast("Order added successfully! ✅", '🛒')
         } catch (err) {
           console.error(err)
-          toast("Error adding order ❌")
+          const msg = err.response?.data?.message || "Error adding order"
+          toast(`${msg} ❌`)
         }
       }
     },
@@ -398,9 +532,11 @@ export default function AdminDashboard() {
           await api.post('/enquiries', rec)
           const res = await api.get('/enquiries')
           setData(d => ({ ...d, enquiries: res.data }))
+          toast("Enquiry added successfully! ✅", '📩')
         } catch (err) {
           console.error(err)
-          toast("Error adding enquiry ❌")
+          const msg = err.response?.data?.message || "Error adding enquiry"
+          toast(`${msg} ❌`)
         }
       }
     },
@@ -442,7 +578,41 @@ export default function AdminDashboard() {
             </p>
           </div>
           <div className={styles.topActions}>
-            <button className="btn-outline" onClick={() => toast('Data exported!', '⬇')}>⬇ Export CSV</button>
+            <button className="btn-outline" onClick={() => {
+              const tabDataMap = {
+                Customers: data.customers,
+                Suppliers: data.suppliers,
+                Products: data.products,
+                Orders: data.orders,
+                Installations: data.installations,
+                Payments: data.payments,
+                Enquiries: data.enquiries,
+              }
+              const rows = tabDataMap[tab]
+              if (!rows || rows.length === 0) {
+                toast('No data to export', '⚠')
+                return
+              }
+              const headers = Object.keys(rows[0])
+              const csvContent = [
+                headers.join(','),
+                ...rows.map(row =>
+                  headers.map(h => {
+                    const val = row[h] == null ? '' : String(row[h])
+                    return val.includes(',') || val.includes('"') || val.includes('\n')
+                      ? `"${val.replace(/"/g, '""')}"` : val
+                  }).join(',')
+                )
+              ].join('\n')
+              const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+              const url = URL.createObjectURL(blob)
+              const a = document.createElement('a')
+              a.href = url
+              a.download = `${tab.toLowerCase()}_${new Date().toISOString().slice(0, 10)}.csv`
+              a.click()
+              URL.revokeObjectURL(url)
+              toast(`${tab} exported as CSV! ⬇`, '✅')
+            }}>⬇ Export CSV</button>
             {ADD_CONFIGS[tab] && (
               <button className="btn-primary" onClick={() => setAddModal(ADD_CONFIGS[tab])}>
                 ➕ Add {tab.slice(0, -1)}
@@ -874,7 +1044,7 @@ export default function AdminDashboard() {
                         { key: 'brand', label: 'Brand' },
                         { key: 'price', label: 'Price', type: 'number' },
                         { key: 'stock_quantity', label: 'Stock', type: 'number' },
-                        { key: 'is_active', label: 'Status', type: 'select', options: [true, false] },
+                        { key: 'is_active', label: 'Status', type: 'select', options: [{ label: 'Active', value: true }, { label: 'Inactive', value: false }] },
                       ],
                       initialData: viewProduct,
                       onSave: async (rec) => {
@@ -900,72 +1070,150 @@ export default function AdminDashboard() {
 
       {/* ORDER MODAL */}
       {viewOrder && (
-        <div className={styles.overlay} onClick={() => setViewOrder(null)}>
-          <div className={styles.modal} onClick={e => e.stopPropagation()}>
+        <div className={styles.overlay} onClick={() => { setViewOrder(null); setOrderPaymentMethod(null); }}>
+          <div className={styles.modal} onClick={e => e.stopPropagation()} style={{ maxWidth: orderPaymentMethod ? 460 : 500 }}>
             <div className={styles.modalHead}>
-              <h3>🛒 Order Details</h3>
-              <button className={styles.closeBtn} onClick={() => setViewOrder(null)}>✕</button>
+              <h3>{orderPaymentMethod === 'success' ? '✅ Payment Complete' : orderPaymentMethod === 'upi' ? '📱 Pay via UPI' : orderPaymentMethod === 'choose' ? '💳 Select Payment' : '🛒 Order Details'}</h3>
+              <button className={styles.closeBtn} onClick={() => { setViewOrder(null); setOrderPaymentMethod(null); }}>✕</button>
             </div>
             <div className={styles.modalBody}>
-              <div className={styles.formGrid}>
-                <div className={styles.mField}>
-                  <label>Order ID</label>
-                  <input value={`ORD-${String(viewOrder.order_id).padStart(3, '0')}`} readOnly />
-                </div>
-                <div className={styles.mField}>
-                  <label>Customer</label>
-                  <input value={viewOrder.customer_name || ''} readOnly />
-                </div>
-                <div className={styles.mField}>
-                  <label>Amount (₹)</label>
-                  <input value={viewOrder.total_amount || ''} readOnly />
-                </div>
-                <div className={styles.mField}>
-                  <label>Status</label>
-                  <input value={viewOrder.status || ''} readOnly />
-                </div>
-              </div>
-              <div className={styles.modalActions}>
-                <button
-                  className="btn-outline"
-                  style={{ color: 'red' }}
-                  onClick={() => handleDeleteOrder(viewOrder.order_id)}
-                >
-                  Delete
-                </button>
 
-                <button
-                  className="btn-outline"
-                  onClick={() => generateInvoice(viewOrder)}
-                >
-                  Download Invoice
-                </button>
+              {/* ── ORDER DETAILS VIEW ── */}
+              {!orderPaymentMethod && (<>
+                <div className={styles.formGrid}>
+                  <div className={styles.mField}>
+                    <label>Order ID</label>
+                    <input value={`ORD-${String(viewOrder.order_id).padStart(3, '0')}`} readOnly />
+                  </div>
+                  <div className={styles.mField}>
+                    <label>Customer</label>
+                    <input value={viewOrder.customer_name || ''} readOnly />
+                  </div>
+                  <div className={styles.mField}>
+                    <label>Amount (₹)</label>
+                    <input value={viewOrder.total_amount || ''} readOnly />
+                  </div>
+                  <div className={styles.mField}>
+                    <label>Status</label>
+                    <input value={viewOrder.status || ''} readOnly />
+                  </div>
+                </div>
+                <div className={styles.modalActions}>
+                  <button className="btn-outline" style={{ color: 'red' }} onClick={() => handleDeleteOrder(viewOrder.order_id)}>Delete</button>
+                  <button className="btn-outline" onClick={() => generateInvoice(viewOrder)}>Download Invoice</button>
+                  {viewOrder.status !== 'confirmed' && viewOrder.status !== 'completed' && viewOrder.status !== 'installed' && (
+                    <button className="btn-primary" onClick={() => setOrderPaymentMethod('choose')}>Pay Now</button>
+                  )}
+                </div>
+              </>)}
 
-                {viewOrder.status !== 'confirmed' && viewOrder.status !== 'completed' && viewOrder.status !== 'installed' && (
+              {/* ── PAYMENT METHOD PICKER ── */}
+              {orderPaymentMethod === 'choose' && (
+                <div>
+                  <div style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.25)', borderRadius: 10, padding: '12px 16px', marginBottom: 20, display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>ORD-{String(viewOrder.order_id).padStart(3,'0')}</span>
+                    <span style={{ color: 'var(--primary)', fontWeight: 700 }}>₹{Number(viewOrder.total_amount).toLocaleString('en-IN')}</span>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 16 }}>
+                    <button
+                      onClick={() => setOrderPaymentMethod('upi')}
+                      style={{ padding: '20px 16px', borderRadius: 12, border: '2px solid rgba(16,185,129,0.4)', background: 'rgba(16,185,129,0.07)', cursor: 'pointer', color: 'var(--text)' }}
+                    >
+                      <div style={{ fontSize: '2rem', marginBottom: 8 }}>📱</div>
+                      <div style={{ fontWeight: 700 }}>UPI / QR Code</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 4 }}>GPay, PhonePe, Paytm</div>
+                    </button>
+                    <button
+                      onClick={async () => {
+                        setOrderPaymentMethod(null)
+                        try {
+                          const { data } = await api.post('/razorpay/init', {
+                            order_id: viewOrder.order_id,
+                            amount: viewOrder.total_amount,
+                            customer_id: viewOrder.customer_id,
+                            description: `Order ${viewOrder.order_id}`
+                          })
+                          const options = {
+                            key: data.data.key_id,
+                            amount: data.data.amount * 100,
+                            currency: 'INR',
+                            name: 'SolarTech Pro',
+                            description: `Payment for ORD-${viewOrder.order_id}`,
+                            order_id: data.data.razorpay_order_id,
+                            handler: async function (response) {
+                              try {
+                                await api.post('/razorpay/verify', {
+                                  razorpay_order_id: response.razorpay_order_id,
+                                  razorpay_payment_id: response.razorpay_payment_id,
+                                  razorpay_signature: response.razorpay_signature,
+                                  order_id: viewOrder.order_id,
+                                  customer_id: viewOrder.customer_id,
+                                  amount: viewOrder.total_amount
+                                })
+                                toast('Payment Successful ✅')
+                                fetchAllData()
+                                setViewOrder(null)
+                              } catch (err) {
+                                toast('Payment verification failed ❌')
+                              }
+                            }
+                          }
+                          if (window.Razorpay) { new window.Razorpay(options).open() }
+                        } catch (err) {
+                          toast('Payment initialization failed ❌')
+                        }
+                      }}
+                      style={{ padding: '20px 16px', borderRadius: 12, border: '2px solid rgba(99,102,241,0.4)', background: 'rgba(99,102,241,0.07)', cursor: 'pointer', color: 'var(--text)' }}
+                    >
+                      <div style={{ fontSize: '2rem', marginBottom: 8 }}>💳</div>
+                      <div style={{ fontWeight: 700 }}>Card / Net Banking</div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 4 }}>Visa, Mastercard</div>
+                    </button>
+                  </div>
+                  <button className="btn-outline" style={{ width: '100%' }} onClick={() => setOrderPaymentMethod(null)}>← Back</button>
+                </div>
+              )}
+
+              {/* ── UPI PAYMENT (Razorpay verified) ── */}
+              {orderPaymentMethod === 'upi' && (
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.25)', borderRadius: 10, padding: '10px 16px', marginBottom: 24, display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>ORD-{String(viewOrder.order_id).padStart(3,'0')}</span>
+                    <span style={{ color: 'var(--primary)', fontWeight: 700 }}>₹{Number(viewOrder.total_amount).toLocaleString('en-IN')}</span>
+                  </div>
+                  <div style={{ fontSize: '3.5rem', marginBottom: 12 }}>📱</div>
+                  <p style={{ fontWeight: 600, fontSize: '1rem', marginBottom: 8 }}>Pay via UPI</p>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: 8, lineHeight: 1.6 }}>
+                    Click below to open Razorpay's secure payment.<br/>
+                    Select <strong style={{ color: 'var(--text)' }}>UPI</strong> inside and pay via GPay, PhonePe, Paytm or QR.<br/>
+                    <strong style={{ color: '#10B981' }}>Payment is verified automatically — no fake confirmations.</strong>
+                  </p>
+                  <div style={{ background: 'rgba(16,185,129,0.07)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 8, padding: '10px 14px', marginBottom: 20, fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                    UPI ID: <strong style={{ color: 'var(--text)' }}>koleprathmesh-2@oksbi</strong>
+                  </div>
                   <button
                     className="btn-primary"
+                    style={{ width: '100%', marginBottom: 10, padding: '14px', fontSize: '1rem' }}
                     onClick={async () => {
                       try {
-                        // Initialize payment
                         const { data } = await api.post('/razorpay/init', {
                           order_id: viewOrder.order_id,
                           amount: viewOrder.total_amount,
                           customer_id: viewOrder.customer_id,
-                          description: `Order ${viewOrder.order_id}`
-                        });
-
+                          description: `Order ORD-${String(viewOrder.order_id).padStart(3,'0')}`
+                        })
                         const options = {
-                          key: data.data.key_id || 'rzp_test_YOUR_KEY',
-                          amount: data.data.amount * 100,
-                          currency: "INR",
-                          name: "SolarTech Pro",
-                          description: `Payment for ORD-${viewOrder.order_id}`,
+                          key: data.data.key_id,
+                          amount: Math.round(Number(data.data.amount) * 100),
+                          currency: 'INR',
+                          name: 'SolarTech Pro',
+                          description: `ORD-${String(viewOrder.order_id).padStart(3,'0')}`,
                           order_id: data.data.razorpay_order_id,
+                          prefill: { contact: viewOrder.customer_phone || '', email: viewOrder.customer_email || '' },
+                          notes: { upi_id: 'koleprathmesh-2@oksbi' },
                           handler: async function (response) {
                             try {
-                              console.log("PAYMENT RESPONSE:", response)
-
-                              const verifyRes = await api.post('/razorpay/verify', {
+                              await api.post('/razorpay/verify', {
                                 razorpay_order_id: response.razorpay_order_id,
                                 razorpay_payment_id: response.razorpay_payment_id,
                                 razorpay_signature: response.razorpay_signature,
@@ -973,42 +1221,68 @@ export default function AdminDashboard() {
                                 customer_id: viewOrder.customer_id,
                                 amount: viewOrder.total_amount
                               })
-
-                              console.log("VERIFY RESPONSE:", verifyRes.data)
-                              toast('Payment Successful ✅')
-
-                              // Refresh orders
+                              setOrderPaymentMethod('success')
                               fetchAllData()
-
-                              // Close modal
-                              setViewOrder(null)
-
                             } catch (err) {
-                              console.log("VERIFY ERROR:", err.response?.data || err)
                               toast('Payment verification failed ❌')
                             }
-                          }
-                        };
-
-                        // Initialize Razorpay
-                        if (window.Razorpay) {
-                          const rzp = new window.Razorpay(options);
-                          rzp.open();
+                          },
+                          modal: { ondismiss: () => {} },
+                          theme: { color: '#F59E0B' }
                         }
+                        if (window.Razorpay) { new window.Razorpay(options).open() }
                       } catch (err) {
-                        console.error(err)
-                        toast('Payment initialization failed ❌')
+                        toast('Could not initiate payment ❌')
                       }
                     }}
                   >
-                    Pay Now (Razorpay)
+                    Open UPI Payment →
                   </button>
-                )}
-              </div>
+                  <button className="btn-outline" style={{ width: '100%' }} onClick={() => setOrderPaymentMethod('choose')}>← Back</button>
+                </div>
+              )}
+
+              {/* ── PAYMENT SUCCESS VIEW ── */}
+              {orderPaymentMethod === 'success' && (
+                <div style={{ textAlign: 'center', padding: '10px 0 20px' }}>
+                  <div style={{ fontSize: '4rem', marginBottom: 12 }}>🎉</div>
+                  <h3 style={{ color: '#10B981', fontSize: '1.3rem', marginBottom: 8 }}>Payment Successful!</h3>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: 20 }}>
+                    Your payment has been recorded successfully.
+                  </p>
+                  <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.25)', borderRadius: 12, padding: '16px 20px', marginBottom: 20, textAlign: 'left' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Order ID</span>
+                      <span style={{ fontWeight: 700 }}>ORD-{String(viewOrder.order_id).padStart(3,'0')}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Amount Paid</span>
+                      <span style={{ fontWeight: 700, color: '#10B981', fontSize: '1.1rem' }}>₹{Number(viewOrder.total_amount).toLocaleString('en-IN')}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Customer</span>
+                      <span style={{ fontWeight: 600 }}>{viewOrder.customer_name}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Payment Method</span>
+                      <span style={{ fontWeight: 600 }}>📱 UPI</span>
+                    </div>
+                  </div>
+                  <button
+                    className="btn-primary"
+                    style={{ width: '100%' }}
+                    onClick={() => { setOrderPaymentMethod(null); setViewOrder(null); }}
+                  >
+                    Done
+                  </button>
+                </div>
+              )}
+
             </div>
           </div>
         </div>
       )}
+
 
       {/* ENQUIRY MODAL */}
       {viewEnquiry && (
@@ -1082,8 +1356,8 @@ export default function AdminDashboard() {
           fields={addModal.fields}
           initialData={addModal.initialData}
           onClose={() => setAddModal(null)}
-          onSave={(rec) => {
-            addModal.onSave(rec);
+          onSave={async (rec) => {
+            await addModal.onSave(rec);
           }}
         />
       )}

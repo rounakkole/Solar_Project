@@ -1,73 +1,193 @@
-const express = require('express')
-const router  = express.Router()
-const db      = require('../config/db')
-const auth = require('../middleware/auth');
-// GET all suppliers
-router.get('/',auth, async (req, res) => {
-  try {
-    const [rows] = await db.query('SELECT * FROM suppliers ORDER BY company_name')
-    res.json(rows)
-  } catch (err) {
-    res.status(500).json({ message: err.message })
-  }
-})
+const express = require('express');
+const router = express.Router();
 
-// GET single supplier with their products
+const { pool } = require('../config/db');
+const auth = require('../middleware/auth');
+
+// ======================================
+// GET ALL SUPPLIERS
+// ======================================
+router.get('/', auth, async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      'SELECT * FROM suppliers ORDER BY supplier_id DESC'
+    );
+
+    res.json(rows);
+  } catch (err) {
+    console.log('GET SUPPLIERS ERROR:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch suppliers',
+    });
+  }
+});
+
+// ======================================
+// GET SINGLE SUPPLIER (VIEW BUTTON)
+// ======================================
 router.get('/:id', async (req, res) => {
   try {
-    const [sup] = await db.query('SELECT * FROM suppliers WHERE supplier_id = ?', [req.params.id])
-    if (!sup.length) return res.status(404).json({ message: 'Supplier not found' })
-    const [products] = await db.query(
-      'SELECT * FROM products WHERE supplier_id = ? AND is_active = 1', [req.params.id]
-    )
-    res.json({ ...sup[0], products })
-  } catch (err) {
-    res.status(500).json({ message: err.message })
-  }
-})
+    const supplierId = req.params.id;
 
-// POST create supplier
+    const [rows] = await pool.query(
+      'SELECT * FROM suppliers WHERE supplier_id = ?',
+      [supplierId]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Supplier not found',
+      });
+    }
+
+    res.json(rows[0]);
+  } catch (err) {
+    console.log('VIEW SUPPLIER ERROR:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch supplier',
+    });
+  }
+});
+
+// ======================================
+// CREATE SUPPLIER
+// ======================================
 router.post('/', async (req, res) => {
-  const { company_name, contact_person, email, phone, address, city, gst_number, pan_number } = req.body
-  if (!company_name || !phone) {
-    return res.status(400).json({ message: 'company_name and phone are required' })
-  }
   try {
-    const [result] = await db.query(
-      `INSERT INTO suppliers (company_name, contact_person, email, phone, address, city, gst_number, pan_number)
-       VALUES (?,?,?,?,?,?,?,?)`,
-      [company_name, contact_person, email, phone, address, city, gst_number, pan_number]
-    )
-    res.status(201).json({ insertId: result.insertId, message: 'Supplier created' })
-  } catch (err) {
-    if (err.code === 'ER_DUP_ENTRY') return res.status(409).json({ message: 'GST number already exists' })
-    res.status(500).json({ message: err.message })
-  }
-})
+    const {
+      company_name,
+      contact_person,
+      email,
+      phone,
+      address,
+      city,
+      gst_number,
+      pan_number,
+    } = req.body;
 
-// PUT update supplier
+    if (!company_name || !phone) {
+      return res.status(400).json({
+        success: false,
+        message: 'Company name and phone are required',
+      });
+    }
+
+    const [result] = await pool.query(
+      `INSERT INTO suppliers (
+        company_name,
+        contact_person,
+        email,
+        phone,
+        address,
+        city,
+        gst_number,
+        pan_number
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        company_name,
+        contact_person,
+        email,
+        phone,
+        address,
+        city,
+        gst_number,
+        pan_number,
+      ]
+    );
+
+    res.status(201).json({
+      success: true,
+      message: 'Supplier created successfully',
+      supplier_id: result.insertId,
+    });
+  } catch (err) {
+    console.log('CREATE SUPPLIER ERROR:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create supplier',
+    });
+  }
+});
+
+// ======================================
+// UPDATE SUPPLIER
+// ======================================
 router.put('/:id', async (req, res) => {
-  const { company_name, contact_person, email, phone, address, city, gst_number, status } = req.body
   try {
-    await db.query(
-      `UPDATE suppliers SET company_name=?, contact_person=?, email=?, phone=?,
-       address=?, city=?, gst_number=?, status=? WHERE supplier_id=?`,
-      [company_name, contact_person, email, phone, address, city, gst_number, status, req.params.id]
-    )
-    res.json({ message: 'Supplier updated' })
-  } catch (err) {
-    res.status(500).json({ message: err.message })
-  }
-})
+    const supplierId = req.params.id;
+    const {
+      company_name,
+      contact_person,
+      email,
+      phone,
+      address,
+      city,
+      gst_number,
+      status,
+    } = req.body;
 
-// DELETE supplier
+    await pool.query(
+      `UPDATE suppliers SET
+        company_name = ?,
+        contact_person = ?,
+        email = ?,
+        phone = ?,
+        address = ?,
+        city = ?,
+        gst_number = ?,
+        status = ?
+      WHERE supplier_id = ?`,
+      [
+        company_name,
+        contact_person,
+        email,
+        phone,
+        address,
+        city,
+        gst_number,
+        status,
+        supplierId,
+      ]
+    );
+
+    res.json({
+      success: true,
+      message: 'Supplier updated successfully',
+    });
+  } catch (err) {
+    console.log('UPDATE SUPPLIER ERROR:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update supplier',
+    });
+  }
+});
+
+// ======================================
+// DELETE SUPPLIER
+// ======================================
 router.delete('/:id', async (req, res) => {
   try {
-    await db.query('UPDATE suppliers SET status = "inactive" WHERE supplier_id = ?', [req.params.id])
-    res.json({ message: 'Supplier deactivated' })
-  } catch (err) {
-    res.status(500).json({ message: err.message })
-  }
-})
+    const supplierId = req.params.id;
 
-module.exports = router
+    await pool.query('DELETE FROM suppliers WHERE supplier_id = ?', [
+      supplierId,
+    ]);
+
+    res.json({
+      success: true,
+      message: 'Supplier deleted successfully',
+    });
+  } catch (err) {
+    console.log('DELETE SUPPLIER ERROR:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete supplier',
+    });
+  }
+});
+
+module.exports = router;
