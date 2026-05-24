@@ -11,10 +11,18 @@ console.log("Starting Solar Panel Backend Server...\n");
 const app = express();
 const server = http.createServer(app);
 
+// Define your allowed frontend URLs in one place
+const allowedOrigins = [
+    'http://localhost:5173', // Your local Vite frontend
+    'process.env.FRONTEND_URL',
+    'http://localhost:3000',
+    'https://witty-sea-056a88400.7.azurestaticapps.net' // Your Azure Static Web App
+];
+
 // CORS setup
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:3000",
-  credentials: true
+    origin: allowedOrigins,
+    credentials: true 
 }));
 
 // Middleware
@@ -33,10 +41,13 @@ app.get("/api/health", (req, res) => {
 // Socket.IO setup
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: allowedOrigins,
     credentials: true
   }
 });
+
+
+
 
 io.on("connection", (socket) => {
   console.log("Socket connected:", socket.id);
@@ -97,6 +108,12 @@ app.use((err, req, res, next) => {
     message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
   });
 });
+
+
+
+
+
+
 
 // Start server safely
 const PORT = process.env.PORT || 5000;

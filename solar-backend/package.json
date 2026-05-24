@@ -38,19 +38,4 @@
   "devDependencies": {
     "nodemon": "^3.1.14"
   }
-
-
-const express = require('express');
-const cors = require('cors');
-const app = express();
-
-// Allow requests from your local frontend AND your deployed Azure frontend
-app.use(cors({
-    origin: [
-        'http://localhost:5173', // Default Vite local port
-        'https://witty-sea-056a88400.7.azurestaticapps.net' // Update this once Azure gives you your frontend URL
-    ]
-}));
-
-
 }
