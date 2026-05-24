@@ -129,7 +129,7 @@ async function startServer() {
       console.log(`Server running on http://localhost:${PORT}`);
       console.log(`Health check: http://localhost:${PORT}/api/health`);
       console.log(`Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
-      console.log(`Database: ${process.env.DB_NAME || 'solar_db'}`);
+      console.log(`Database: ${process.env.DB_NAME || 'solar-mysql-db'}`);
       console.log("\n All systems operational!\n");
     }).on("error", (err) => {
       if (err.code === "EADDRINUSE") {

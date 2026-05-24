@@ -6,10 +6,19 @@ const Razorpay = require('razorpay')
 const crypto = require('crypto')
 
 // Initialize Razorpay
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET
-})
+let razorpay;
+try {
+  if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+    razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET
+    });
+  } else {
+    console.warn("WARNING: Razorpay keys missing. Payments will fail.");
+  }
+} catch (error) {
+  console.error("Failed to initialize Razorpay:", error);
+}
 
 // ================================
 // INIT PAYMENT
