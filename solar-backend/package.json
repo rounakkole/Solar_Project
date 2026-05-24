@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "db:init": "mysql -u root -p < solar_database.sql",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "db:init": "mysql -h solar-mysql-server.mysql.database.azure.com -u mysqladmin -p < solar-mysql-server.sql"
   },
   "keywords": [
     "solar",
