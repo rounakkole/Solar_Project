@@ -220,7 +220,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     fetchAllData();
 
-    const socket = io('http://localhost:5000');
+    const socket = io('${import.meta.env.VITE_BACKEND_URL}');
     socket.on('dashboard_update', () => {
       fetchAllData();
     });

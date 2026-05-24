@@ -3,8 +3,8 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 
 const ADMIN = {
-  email: "admin@gmail.com",
-  password: "admin123"
+  email: "mysqladmin@gmail.com",
+  password: "StrongPassword@123"
 };
 
 router.post('/login', (req, res) => {
@@ -14,7 +14,7 @@ router.post('/login', (req, res) => {
   password = password.trim();
 
   if (email === ADMIN.email && password === ADMIN.password) {
-    const token = jwt.sign({ role: "admin" }, "secretkey", { expiresIn: "1d" });
+    const token = jwt.sign({ role: "admin" }, "secretkey", { expiresIn: "1y" });
     return res.json({ token });
   }
 

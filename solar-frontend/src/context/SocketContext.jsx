@@ -8,7 +8,7 @@ export function SocketProvider({ children }) {
 
   useEffect(() => {
     // Connect to WebSocket
-    const newSocket = io('http://localhost:5000', {
+    const newSocket = io('${import.meta.env.VITE_BACKEND_URL}', {
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,
@@ -16,16 +16,16 @@ export function SocketProvider({ children }) {
     })
 
     newSocket.on('connect', () => {
-      console.log('✅ WebSocket connected')
+      console.log('WebSocket connected')
     })
 
     newSocket.on('stock_updated', (data) => {
-      console.log('📦 Stock updated:', data)
+      console.log('Stock updated:', data)
       // Trigger UI update via state/context
     })
 
     newSocket.on('disconnect', () => {
-      console.log('❌ WebSocket disconnected')
+      console.log('WebSocket disconnected')
     })
 
     setSocket(newSocket)

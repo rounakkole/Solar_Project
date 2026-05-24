@@ -14,11 +14,11 @@ function enquiryConfirmationHTML(data) {
   return `
   <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#0A0F1E;color:#F9FAFB;border-radius:12px;overflow:hidden">
     <div style="background:#F59E0B;padding:20px 30px">
-      <h1 style="margin:0;color:#000;font-size:1.3rem">☀ SolarTech Pro — Enquiry Received</h1>
+      <h1 style="margin:0;color:#000;font-size:1.3rem">Solar — Enquiry Received</h1>
     </div>
     <div style="padding:30px">
       <p>Dear <strong>${data.name}</strong>,</p>
-      <p>Thank you for contacting SolarTech Pro! We have received your enquiry and our solar expert will call you within <strong style="color:#F59E0B">24 hours</strong>.</p>
+      <p>Thank you for contacting Solar! We have received your enquiry and our solar expert will call you within <strong style="color:#F59E0B">24 hours</strong>.</p>
       <div style="background:#1F2937;border-radius:8px;padding:16px;margin:20px 0">
         <h3 style="margin:0 0 12px;color:#F59E0B">Your Enquiry Summary</h3>
         <table style="width:100%;font-size:0.88rem">
@@ -34,7 +34,7 @@ function enquiryConfirmationHTML(data) {
       </a>
     </div>
     <div style="padding:16px 30px;border-top:1px solid #374151;font-size:0.78rem;color:#6B7280">
-      SolarTech Pro · Plot 45, MIDC Nagpur · +91 98765 43210 · info@solartechpro.in
+      Solar Plot 45, MIDC Pune +91 98765 43210 · info@solartechpro.in
     </div>
   </div>`
 }
@@ -43,7 +43,7 @@ function orderConfirmationHTML(order, customer) {
   return `
   <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#0A0F1E;color:#F9FAFB;border-radius:12px;overflow:hidden">
     <div style="background:#F59E0B;padding:20px 30px">
-      <h1 style="margin:0;color:#000;font-size:1.3rem">☀ SolarTech Pro — Order Confirmed</h1>
+      <h1 style="margin:0;color:#000;font-size:1.3rem">Solar — Order Confirmed</h1>
     </div>
     <div style="padding:30px">
       <p>Dear <strong>${customer.name}</strong>,</p>
@@ -58,7 +58,7 @@ function orderConfirmationHTML(order, customer) {
       </div>
     </div>
     <div style="padding:16px 30px;border-top:1px solid #374151;font-size:0.78rem;color:#6B7280">
-      SolarTech Pro · Plot 45, MIDC Nagpur · +91 98765 43210
+      Solar · Plot 45, MIDC Pune +91 98765 43210
     </div>
   </div>`
 }
@@ -70,19 +70,19 @@ async function sendEnquiryConfirmation(enquiry) {
     await transporter.sendMail({
       from:    process.env.EMAIL_FROM,
       to:      enquiry.email,
-      subject: '✅ Enquiry Received — SolarTech Pro',
+      subject: 'Enquiry Received — Solar',
       html:    enquiryConfirmationHTML(enquiry),
     })
     // Also notify internal team
     await transporter.sendMail({
       from:    process.env.EMAIL_FROM,
       to:      process.env.EMAIL_USER,
-      subject: `🔔 New Enquiry: ${enquiry.name} — ${enquiry.service_type}`,
+      subject: `New Enquiry: ${enquiry.name} — ${enquiry.service_type}`,
       html:    `<p>New enquiry from <strong>${enquiry.name}</strong> (${enquiry.phone})<br>Service: ${enquiry.service_type}<br>City: ${enquiry.city}</p>`,
     })
-    console.log('📧 Email sent to:', enquiry.email)
+    console.log('Email sent to:', enquiry.email)
   } catch (err) {
-    console.error('❌ Email failed:', err.message)
+    console.error('Email failed:', err.message)
   }
 }
 
@@ -92,11 +92,11 @@ async function sendOrderConfirmation(order, customer) {
     await transporter.sendMail({
       from:    process.env.EMAIL_FROM,
       to:      customer.email,
-      subject: `✅ Order Confirmed ORD-${String(order.order_id).padStart(3,'0')} — SolarTech Pro`,
+      subject: `Order Confirmed ORD-${String(order.order_id).padStart(3,'0')} — Solar`,
       html:    orderConfirmationHTML(order, customer),
     })
   } catch (err) {
-    console.error('❌ Order email failed:', err.message)
+    console.error('Order email failed:', err.message)
   }
 }
 

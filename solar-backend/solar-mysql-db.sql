@@ -2,7 +2,7 @@
 -- SOLAR PANEL INSTALLATION WEBSITE — COMPLETE DATABASE
 -- Project  : Final Semester Project
 -- Database : MySQL 8.0+
--- Run      : mysql -u root -p < solar_database.sql
+-- Run      : mysql -u root -p < solar-mysql-db.sql
 -- ============================================================
 
 CREATE DATABASE IF NOT EXISTS solar_db
@@ -209,14 +209,14 @@ CREATE TABLE IF NOT EXISTS employees (
 
 -- Customers
 INSERT INTO customers (name, email, phone, address, city, state, pincode, property_type) VALUES
-('Rajesh Kumar',  'rajesh@email.com',  '9876543210', 'Flat 4B, Sadar',        'Nagpur',  'Maharashtra', '440001', 'residential'),
-('Priya Sharma',  'priya@email.com',   '9765432109', 'Baner Road',            'Pune',    'Maharashtra', '411045', 'commercial'),
-('Amit Patel',    'amit@email.com',    '9654321098', 'Andheri East',          'Mumbai',  'Maharashtra', '400069', 'industrial'),
-('Sunita Verma',  'sunita@email.com',  '9543210987', 'Gangapur Road',         'Nashik',  'Maharashtra', '422013', 'residential'),
-('Deepak Joshi',  'deepak@email.com',  '9432109876', 'Dharampeth',            'Nagpur',  'Maharashtra', '440010', 'residential'),
-('Kavita Singh',  'kavita@email.com',  '9321098765', 'Camp Area',             'Pune',    'Maharashtra', '411001', 'commercial'),
-('Arun Mehta',    'arun@email.com',    '9210987654', 'Borivali West',         'Mumbai',  'Maharashtra', '400092', 'residential'),
-('Suresh Nair',   'suresh@email.com',  '9109876543', 'Satpur MIDC',           'Nashik',  'Maharashtra', '422007', 'industrial');
+('Rajesh D',  'rajesh@email.com',  '9876543210', 'Flat 4B, Sadar',        'Chinchwad',  'Maharashtra', '440001', 'residential'),
+('Priya H',  'priya@email.com',   '9765432109', 'Baner Road',            'Pune',    'Maharashtra', '411045', 'commercial'),
+('Amit A',    'amit@email.com',    '9654321098', 'Andheri East',          'Mumbai',  'Maharashtra', '400069', 'industrial'),
+('Sunita Z',  'sunita@email.com',  '9543210987', 'Gangapur Road',         'Nashik',  'Maharashtra', '422013', 'residential'),
+('Deepak C',  'deepak@email.com',  '9432109876', 'Dharampeth',            'Pimpri',  'Maharashtra', '440010', 'residential'),
+('Kavita R',  'kavita@email.com',  '9321098765', 'Camp Area',             'Pune',    'Maharashtra', '411001', 'commercial'),
+('Arun L',    'arun@email.com',    '9210987654', 'Borivali West',         'Mumbai',  'Maharashtra', '400092', 'residential'),
+('Suresh S',   'suresh@email.com',  '9109876543', 'Satpur MIDC',           'Nashik',  'Maharashtra', '422007', 'industrial');
 
 -- Suppliers
 INSERT INTO suppliers (company_name, contact_person, email, phone, city, gst_number, status) VALUES
@@ -272,24 +272,24 @@ INSERT INTO payments (order_id, customer_id, amount, payment_date, method, trans
 
 -- Enquiries
 INSERT INTO enquiries (name, email, phone, city, property_type, service_type, monthly_bill, message) VALUES
-('Rohit Agrawal', 'rohit@email.com', '9100000001', 'Nagpur', 'residential', 'Residential Solar Installation', 3500,  'Interested in 5kW system for my home.'),
-('Neha Kulkarni', 'neha@email.com',  '9100000002', 'Pune',   'commercial',  'Commercial Solar Installation',  12000, 'Need solar for my showroom.'),
-('Raju Thorat',   'raju@email.com',  '9100000003', 'Nashik', 'residential', 'Subsidy Assistance',              2800, 'Want to apply for PM Surya Ghar subsidy.');
+('Rohit Y', 'rohit@email.com', '9100000001', 'Pimpri', 'residential', 'Residential Solar Installation', 3500,  'Interested in 5kW system for my home.'),
+('Neha W', 'neha@email.com',  '9100000002', 'Pune',   'commercial',  'Commercial Solar Installation',  12000, 'Need solar for my showroom.'),
+('Raju T',   'raju@email.com',  '9100000003', 'Nashik', 'residential', 'Subsidy Assistance',              2800, 'Want to apply for PM Surya Ghar subsidy.');
 
 -- Subsidies
 INSERT INTO subsidies (customer_id, order_id, scheme_name, applied_date, amount, status) VALUES
-(1, 1, 'PM Surya Ghar Muft Bijli Yojana', '2025-03-10', 78000, 'received'),
-(4, 4, 'PM Surya Ghar Muft Bijli Yojana', '2025-03-15', 52500, 'approved'),
-(7, 7, 'PM Surya Ghar Muft Bijli Yojana', '2025-03-20', 64500, 'applied');
+(1, 1, 'PM Surya Rooftop Solar Yojana', '2025-03-10', 78000, 'received'),
+(4, 4, 'PM Surya Rooftop Solar Yojana', '2025-03-15', 52500, 'approved'),
+(7, 7, 'PM Surya Rooftop Solar Yojana', '2025-03-20', 64500, 'applied');
 
 -- Employees
 INSERT INTO employees (name, role, phone, email, joining_date, salary) VALUES
-('Sandeep Rane',    'manager',    '9200000001', 'sandeep@solartechpro.in', '2020-01-15', 65000),
-('Ravi Yadav',      'technician', '9700000001', 'ravi@solartechpro.in',    '2021-06-01', 28000),
-('Suresh Pawar',    'technician', '9700000002', 'suresh@solartechpro.in',  '2022-03-01', 26000),
-('Vikram Nair',     'technician', '9700000003', 'vikram@solartechpro.in',  '2021-09-15', 27000),
-('Anjali Meshram',  'sales',      '9200000005', 'anjali@solartechpro.in',  '2023-01-10', 32000),
-('Sonal Deshpande', 'admin',      '9200000006', 'sonal@solartechpro.in',   '2022-07-01', 30000);
+('Sandeep B',    'manager',    '9200000001', 'sandeep@solar.in', '2020-01-15', 65000),
+('Ravi T',      'technician', '9700000001', 'ravi@solar.in',    '2021-06-01', 28000),
+('Suresh R',    'technician', '9700000002', 'suresh@solar.in',  '2022-03-01', 26000),
+('Vikram S',     'technician', '9700000003', 'vikram@solar.in',  '2021-09-15', 27000),
+('Anjali M',  'sales',      '9200000005', 'anjali@solar.in',  '2023-01-10', 32000),
+('Prathamesh K', 'admin',      '9200000006', 'Prathamesh@solar.in',   '2022-07-01', 30000);
 
 -- ────────────────────────────────────────────────────────────
 -- VIEWS
