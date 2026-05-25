@@ -35,7 +35,7 @@ export default function Gallery() {
   return (
     <div className={styles.page}>
 
-      <h1 className={styles.title}>🌞 Our Solar Projects</h1>
+      <h1 className={styles.title}>Our Solar Projects</h1>
 
       {/* FILTER BUTTONS */}
       <div className={styles.filters}>

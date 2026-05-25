@@ -7,8 +7,8 @@ export function SocketProvider({ children }) {
   const [socket, setSocket] = useState(null)
 
   useEffect(() => {
-    // Connect to WebSocket
-    const newSocket = io('${import.meta.env.VITE_BACKEND_URL}', {
+    // Connect to WebSocket 
+    const newSocket = io(import.meta.env.VITE_BACKEND_URL, {
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,
