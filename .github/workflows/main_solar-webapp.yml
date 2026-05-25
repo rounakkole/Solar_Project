@@ -63,7 +63,9 @@ jobs:
 
       - name: Initialize MySQL Database
         run: |
-          mysql -h solar-mysql-server.mysql.database.azure.com -u mysqladmin -p"${{ secrets.DB_PASSWORD }}" -P 3306 solar-mysql-db < solar-mysql-db.sql
+          mysql -h solar-mysql-server.mysql.database.azure.com -u mysqladmin -p"${{ secrets.DB_PASSWORD }}" -P 3306 solar-mysql-db < solar-backend/solar-mysql-db.sql
+
+
 
 
 
