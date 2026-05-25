@@ -12,22 +12,47 @@ export default function Footer() {
               Maharashtra's most trusted solar installer. Powering homes & businesses with clean energy since 2015.
             </p>
           </div>
+
+
+
+
           {[
-            { title: 'Services', links: ['Residential Solar','Commercial Solar','Industrial Solar','Battery Storage','AMC & Maintenance'] },
-            { title: 'Company',  links: ['About Us','Gallery','Careers','Testimonials','Blog'] },
-            { title: 'Support',  links: ['FAQ','Warranty Policy','Subsidy Guide','Privacy Policy','Terms of Service'] },
+            { 
+              title: 'Services', 
+              links: [
+                { name: 'Residential Solar', path: '/#services' },
+                { name: 'Commercial Solar', path: '/#services' },
+                { name: 'Industrial Solar', path: '/#services' }
+              ] 
+            },
+            { 
+              title: 'Company',  
+              links: [
+                { name: 'Products', path: '/#products' },
+                { name: 'Gallery', path: '/gallery' }
+              ] 
+            },
+            { 
+              title: 'Support',  
+              links: [
+                { name: 'Locations', path: '/#map-section' },
+                { name: 'Contact', path: '/#contact' }
+              ] 
+            },
           ].map(col => (
             <div key={col.title}>
               <h4>{col.title}</h4>
               <ul>
-                {col.links.map(l => (
-  <li key={l}>
-    {l === 'Gallery' ? (
-      <Link to="/gallery">{l}</Link>
-    ) : (
-      <a href="#">{l}</a>
-    )}
-  </li>
+                {col.links.map(link => (
+                  <li key={link.name}>
+
+                    {link.path.includes('#') ? (
+                    <a href={link.path}>{link.name}</a>
+                    ) : (
+                    <Link to={link.path}>{link.name}</Link>
+                    )}
+                  </li>
+
 ))}
               </ul>
             </div>

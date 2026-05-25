@@ -29,7 +29,10 @@ export default function Products() {
       }
     }).catch(() => {})
 
-    const socket = io('http://localhost:5000')
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"; // net::ERR_CONNECTION_REFUSED
+    const socket = io(BACKEND_URL, {
+      withCredentials: true 
+    });
     
     // Setup socket connection and listeners
     socket.on('connect', () => {
