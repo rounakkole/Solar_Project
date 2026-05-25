@@ -5,9 +5,9 @@
 -- Run      : mysql -u root -p < solar-mysql-db.sql
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS solar-mysql-db
+CREATE DATABASE IF NOT EXISTS `solar-mysql-db`
   CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE solar-mysql-db;
+USE `solar-mysql-db`;
 
 -- ───────────────────────────────────────────────────────────
 -- TABLE 1: CUSTOMERS

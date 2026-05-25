@@ -58,15 +58,19 @@ Continuous deployment Enable
   - Name solar-mysql-db
 
 ```
-  - **Download** `solar_database.sql` from the repo.
-  - Go to Azure >> solar-mysql-server
-  - At the very top right of the screen (next to the search bar), click the Cloud Shell icon (it looks like >_).
-  - If it asks you to choose between Bash or PowerShell, choose Bash.
-  - You need to upload your solar-mysql-server.sql file to this shell. Click the Upload/Download files icon in the Cloud Shell menu bar and select Upload.
-  - Select the solar-mysql-db.sql file from your computer to upload it.
-  - Once uploaded, paste your exact command into the terminal and hit Enter: mysql -h solar-mysql-server.mysql.database.azure.com -u sqladmin -P 3306 solar-mysql-db < solar-mysql-db.sql
-  - Type in your Azure database password when prompted.
+  --Go to Resource groups and click on your resource group: solar-rg.
+On the left-hand menu, click on Access control (IAM).
+Near the top of the page, click the + Add button, then select Add role assignment.
+Select the Role: * Look for the Privileged administrator roles tab (or just search the list).
+Select Contributor (this allows GitHub to manage resources but not change access for other humans).
+Click Next.
+  --Assign Access:
+Leave "Assign access to" set to User, group, or service principal.
+Click + Select members.
+A search panel will slide out on the right. Paste the Object ID from your error message into the search box: solar-webapp 
+Click Review + assign at the bottom, and then click Review + assign one more time to confirm.
 ```
+
 ---
 
 6. **Configure App Service environment variables**

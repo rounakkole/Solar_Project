@@ -1,5 +1,5 @@
-# ☀ SolarTech Pro — Solar Panel Installation Website
-### Final Semester Project | React + Node.js + MySQL
+# Solar Panel Installation Website
+###  React + Node.js + MySQL
 
 ---
 
@@ -186,16 +186,6 @@ PATCH  /api/enquiries/:id/respond
 | Email     | Nodemailer (Gmail SMTP)             |
 | HTTP      | Axios with proxy via Vite           |
 
----
 
-## 💡 Bonus Features to Add Later
 
-- JWT login for Admin panel
-- Image upload for products (Multer)
-- WhatsApp API integration
-- SMS OTP on enquiry
-- Solar production monitoring graph
 
----
-
-*Built for Final Semester Project 2025 — SolarTech Pro*
