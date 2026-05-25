@@ -60,4 +60,17 @@ jobs:
           app-name: 'solar-webapp'
           slot-name: 'Production'
           package: ./solar-backend
+
+      - name: Initialize MySQL Database
+        run: |
+          mysql -h solar-mysql-server.mysql.database.azure.com -u mysqladmin -p"${{ secrets.DB_PASSWORD }}" -P 3306 solar-mysql-db < solar-mysql-db.sql
+
+
+
+
+
+
+
+
+
           
