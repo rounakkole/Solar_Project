@@ -11,11 +11,6 @@ export default function Footer() {
             <p className={styles.about}>
               Maharashtra's most trusted solar installer. Powering homes & businesses with clean energy since 2015.
             </p>
-            <div className={styles.socials}>
-              {['📘','📸','🐦','▶'].map((s,i) => (
-                <a key={i} href="#" className={styles.social}>{s}</a>
-              ))}
-            </div>
           </div>
           {[
             { title: 'Services', links: ['Residential Solar','Commercial Solar','Industrial Solar','Battery Storage','AMC & Maintenance'] },
@@ -41,7 +36,7 @@ export default function Footer() {
 
         <div className={styles.bottom}>
           <p>© 2025 ARDOUR GREEN ENERGY. All rights reserved. Final Semester Project.</p>
-          <p className={styles.tagline}>🌞 Go Solar. Go Green. Save Big.</p>
+          <p className={styles.tagline}> <i class="bi bi-sun-fill"></i> Go Solar. Go Green. Save Big.</p>
         </div>
       </div>
     </footer>

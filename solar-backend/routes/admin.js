@@ -78,7 +78,7 @@ router.get('/dashboard', auth, adminOnly, async (req, res) => {
       `);
       topProducts = rows;
     } catch (err) {
-      console.log("⚠️ order_items table missing or not ready");
+      console.log("order_items table missing or not ready");
     }
 
     res.json({

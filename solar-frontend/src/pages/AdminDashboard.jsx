@@ -147,7 +147,7 @@ export default function AdminDashboard() {
       setViewCustomer(res.data)
     } catch (err) {
       console.error(err)
-      toast("Error loading customer ❌")
+      toast("Error loading customer")
     }
   }
 
@@ -182,7 +182,7 @@ export default function AdminDashboard() {
     doc.text(`Total: Rs. ${Number(order.total_amount).toLocaleString('en-IN')}`, 14, finalY + 15)
 
     doc.save(`Invoice_ORD-${String(order.order_id).padStart(3, '0')}.pdf`)
-    toast('Invoice downloaded! 📄')
+    toast('Invoice downloaded!')
   }
 
   const fetchAllData = async () => {
@@ -211,7 +211,7 @@ export default function AdminDashboard() {
 
     } catch (err) {
       console.error("API ERROR:", err.response?.data || err.message);
-      toast("Backend error or unauthorized ❌");
+      toast("Backend error or unauthorized");
     } finally {
       setLoading(false);
     }
@@ -260,7 +260,7 @@ export default function AdminDashboard() {
 
     console.log("DELETE RESPONSE:", res.data)
 
-    toast("Supplier deleted successfully ✅")
+    toast("Supplier deleted successfully")
 
     setViewSupplier(null)
 
@@ -270,7 +270,7 @@ export default function AdminDashboard() {
 
     console.log("DELETE ERROR:", err.response?.data || err)
 
-    toast("Delete failed ❌")
+    toast("Delete failed")
   }
 }
 
@@ -290,7 +290,7 @@ export default function AdminDashboard() {
 
     console.log("SUPPLIER ERROR:", err)
 
-    toast("Error loading supplier ❌")
+    toast("Error loading supplier")
   }
 }
 
@@ -300,7 +300,7 @@ export default function AdminDashboard() {
       setViewProduct(res.data?.data || res.data)
     } catch (err) {
       console.error(err)
-      toast("Error loading product ❌")
+      toast("Error loading product")
     }
   }
 
@@ -314,7 +314,7 @@ export default function AdminDashboard() {
       fetchAllData()
     } catch (err) {
       console.error(err)
-      toast("Cannot delete product ❌")
+      toast("Cannot delete product")
     }
   }
 
@@ -323,7 +323,7 @@ export default function AdminDashboard() {
       const res = await api.get(`/orders/${id}`)
       setViewOrder(res.data)
     } catch (err) {
-      toast("Error loading order ❌")
+      toast("Error loading order")
     }
   }
 
@@ -334,7 +334,7 @@ export default function AdminDashboard() {
       toast("Order deleted 🗑")
       fetchAllData()
     } catch (err) {
-      toast("Cannot delete order ❌")
+      toast("Cannot delete order")
     }
   }
 
@@ -343,7 +343,7 @@ export default function AdminDashboard() {
       const res = await api.get(`/enquiries/${id}`)
       setViewEnquiry(res.data)
     } catch (err) {
-      toast("Error loading enquiry ❌")
+      toast("Error loading enquiry")
     }
   }
 
@@ -354,7 +354,7 @@ export default function AdminDashboard() {
       toast("Enquiry deleted 🗑")
       fetchAllData()
     } catch (err) {
-      toast("Cannot delete enquiry ❌")
+      toast("Cannot delete enquiry")
     }
   }
 
@@ -385,11 +385,11 @@ export default function AdminDashboard() {
           await api.post('/customers', rec)
           const res = await api.get('/customers')
           setData(d => ({ ...d, customers: res.data }))
-          toast("Customer added successfully! ✅", '👥')
+          toast("Customer added successfully!", '👥')
         } catch (err) {
           console.error(err)
           const msg = err.response?.data?.message || "Error adding customer"
-          toast(`${msg} ❌`)
+          toast(`${msg}`)
         }
       }
     },
@@ -466,7 +466,7 @@ Suppliers: {
         suppliers: res.data
       }))
 
-      toast("Supplier added successfully ✅")
+      toast("Supplier added successfully")
 
     } catch (err) {
 
@@ -474,7 +474,7 @@ Suppliers: {
 
       toast(
         err.response?.data?.message ||
-        "Failed to add supplier ❌"
+        "Failed to add supplier"
       )
     }
   }
@@ -509,11 +509,11 @@ Suppliers: {
           })
           const res = await api.get('/orders')
           setData(d => ({ ...d, orders: res.data }))
-          toast("Order added successfully! ✅", '🛒')
+          toast("Order added successfully!", '🛒')
         } catch (err) {
           console.error(err)
           const msg = err.response?.data?.message || "Error adding order"
-          toast(`${msg} ❌`)
+          toast(`${msg}`)
         }
       }
     },
@@ -532,11 +532,11 @@ Suppliers: {
           await api.post('/enquiries', rec)
           const res = await api.get('/enquiries')
           setData(d => ({ ...d, enquiries: res.data }))
-          toast("Enquiry added successfully! ✅", '📩')
+          toast("Enquiry added successfully!", '📩')
         } catch (err) {
           console.error(err)
           const msg = err.response?.data?.message || "Error adding enquiry"
-          toast(`${msg} ❌`)
+          toast(`${msg}`)
         }
       }
     },
@@ -611,7 +611,7 @@ Suppliers: {
               a.download = `${tab.toLowerCase()}_${new Date().toISOString().slice(0, 10)}.csv`
               a.click()
               URL.revokeObjectURL(url)
-              toast(`${tab} exported as CSV! ⬇`, '✅')
+              toast(`${tab} exported as CSV!`, '✅')
             }}>⬇ Export CSV</button>
             {ADD_CONFIGS[tab] && (
               <button className="btn-primary" onClick={() => setAddModal(ADD_CONFIGS[tab])}>
@@ -886,11 +886,11 @@ Suppliers: {
                       onSave: async (rec) => {
                         try {
                           await api.put(`/customers/${viewCustomer.customer_id}`, rec)
-                          toast("Updated ✅")
+                          toast("Updated")
                           setViewCustomer(null)
                           fetchAllData()
                         } catch (err) {
-                          toast("Update failed ❌")
+                          toast("Update failed")
                         }
                       }
                     })
@@ -970,11 +970,11 @@ Suppliers: {
                       onSave: async (rec) => {
                         try {
                           await api.put(`/suppliers/${viewSupplier.supplier_id}`, rec)
-                          toast("Updated ✅")
+                          toast("Updated")
                           setViewSupplier(null)
                           fetchAllData()
                         } catch (err) {
-                          toast("Update failed ❌")
+                          toast("Update failed")
                         }
                       }
                     })
@@ -1050,11 +1050,11 @@ Suppliers: {
                       onSave: async (rec) => {
                         try {
                           await api.put(`/products/${viewProduct.product_id}`, rec)
-                          toast("Updated ✅")
+                          toast("Updated")
                           setViewProduct(null)
                           fetchAllData()
                         } catch (err) {
-                          toast("Update failed ❌")
+                          toast("Update failed")
                         }
                       }
                     })
@@ -1073,7 +1073,7 @@ Suppliers: {
         <div className={styles.overlay} onClick={() => { setViewOrder(null); setOrderPaymentMethod(null); }}>
           <div className={styles.modal} onClick={e => e.stopPropagation()} style={{ maxWidth: orderPaymentMethod ? 460 : 500 }}>
             <div className={styles.modalHead}>
-              <h3>{orderPaymentMethod === 'success' ? '✅ Payment Complete' : orderPaymentMethod === 'upi' ? '📱 Pay via UPI' : orderPaymentMethod === 'choose' ? '💳 Select Payment' : '🛒 Order Details'}</h3>
+              <h3>{orderPaymentMethod === 'success' ? 'Payment Complete' : orderPaymentMethod === 'upi' ? '📱 Pay via UPI' : orderPaymentMethod === 'choose' ? '💳 Select Payment' : '🛒 Order Details'}</h3>
               <button className={styles.closeBtn} onClick={() => { setViewOrder(null); setOrderPaymentMethod(null); }}>✕</button>
             </div>
             <div className={styles.modalBody}>
@@ -1150,17 +1150,17 @@ Suppliers: {
                                   customer_id: viewOrder.customer_id,
                                   amount: viewOrder.total_amount
                                 })
-                                toast('Payment Successful ✅')
+                                toast('Payment Successful')
                                 fetchAllData()
                                 setViewOrder(null)
                               } catch (err) {
-                                toast('Payment verification failed ❌')
+                                toast('Payment verification failed')
                               }
                             }
                           }
                           if (window.Razorpay) { new window.Razorpay(options).open() }
                         } catch (err) {
-                          toast('Payment initialization failed ❌')
+                          toast('Payment initialization failed')
                         }
                       }}
                       style={{ padding: '20px 16px', borderRadius: 12, border: '2px solid rgba(99,102,241,0.4)', background: 'rgba(99,102,241,0.07)', cursor: 'pointer', color: 'var(--text)' }}
@@ -1224,7 +1224,7 @@ Suppliers: {
                               setOrderPaymentMethod('success')
                               fetchAllData()
                             } catch (err) {
-                              toast('Payment verification failed ❌')
+                              toast('Payment verification failed')
                             }
                           },
                           modal: { ondismiss: () => {} },
@@ -1232,7 +1232,7 @@ Suppliers: {
                         }
                         if (window.Razorpay) { new window.Razorpay(options).open() }
                       } catch (err) {
-                        toast('Could not initiate payment ❌')
+                        toast('Could not initiate payment')
                       }
                     }}
                   >
@@ -1333,11 +1333,11 @@ Suppliers: {
                   onClick={async () => {
                     try {
                       await api.patch(`/enquiries/${viewEnquiry.enquiry_id}/respond`, { assigned_to: 'Admin' });
-                      toast('Enquiry status updated! ✅');
+                      toast('Enquiry status updated!');
                       setViewEnquiry(null);
                       fetchAllData();
                     } catch (err) {
-                      toast('Failed to update enquiry ❌');
+                      toast('Failed to update enquiry');
                     }
                   }}
                 >

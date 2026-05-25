@@ -13,7 +13,7 @@ const FALLBACK = [
   { product_id:6, product_name:'GI Mount Structure 5kW', category:'structure',price:12000, brand:'Nexus',   description:'Hot-dip galvanized, 150 kmph wind-rated mounting.', stock_quantity:50 },
 ]
 
-const ICONS = { panel:'🌞', inverter:'⚡', battery:'🔋', structure:'🏗️', accessory:'🔩', cable:'🔌' }
+const ICONS = { panel: <i class="bi bi-sun-fill"></i>, inverter: <i class="bi bi-lightning-charge-fill"></i>, battery: <i class="bi bi-battery-full"></i>, structure: <i class="bi bi-buildings-fill"></i>, accessory: <i class="bi bi-box-seam-fill"></i>, cable: <i class="bi bi-displayport-fill"></i> }
 
 export default function Products() {
   const [products, setProducts] = useState(FALLBACK)
@@ -81,7 +81,7 @@ export default function Products() {
           {shown.map(p => (
             <div key={p.product_id} className={styles.card}>
               <div className={styles.imgBox}>
-                <span>{ICONS[p.category] || '☀'}</span>
+                <span>{ICONS[p.category] || <i class="bi bi-sun-fill"></i>}</span>
               </div>
               <div className={styles.body}>
                 <span className={`badge badge-green ${styles.catBadge}`}>{p.brand || p.category}</span>
@@ -93,7 +93,7 @@ export default function Products() {
                     className={styles.addBtn}
                     onClick={() => {
                       addToCart(p)
-                      toast(`${p.product_name} added to cart!`, '🛒')
+                      toast(`${p.product_name} added to cart!`, <i class="bi bi-cart4"></i>)
                     }}
                   >
                     + Add to Quote
@@ -101,7 +101,7 @@ export default function Products() {
                 </div>
                 <div className={styles.stock}>
                   <span className={p.stock_quantity > 0 ? styles.inStock : styles.outStock}>
-                    {p.stock_quantity > 0 ? `✓ ${p.stock_quantity} in stock` : '✗ Out of stock'}
+                    {p.stock_quantity > 0 ? `${p.stock_quantity} in stock` : 'Out of stock'}
                   </span>
                 </div>
               </div>
