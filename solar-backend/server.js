@@ -20,6 +20,7 @@ const allowedOrigins = [
 ];
 
 // CORS setup
+// app.use(cors())
 app.use(cors({
     origin: allowedOrigins,
     credentials: true 
@@ -116,7 +117,7 @@ app.use((err, req, res, next) => {
 
 
 // Start server safely
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.DB_PORT || 5000;
 
 // Initialize database before starting server
 async function startServer() {
