@@ -45,6 +45,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: node-app
+
+
+      - name: Get Runner IP
+        id: ip
+        run: echo "ipv4=$(curl -s http://whatismyip.akamai.com/)" >> $GITHUB_OUTPUT
+
+
       
       - name: Login to Azure
         uses: azure/login@v2
@@ -61,12 +68,16 @@ jobs:
           slot-name: 'Production'
           package: ./solar-backend
 
+      - name: Add Temporary Firewall Rule
+        run: az mysql flexible-server firewall-rule create -g solar-rg -n solar-mysql-server -r GHActionsRule --start-ip-address ${{ steps.ip.outputs.ipv4 }} --end-ip-address ${{ steps.ip.outputs.ipv4 }}
+
       - name: Initialize MySQL Database
         run: |
           mysql -h solar-mysql-server.mysql.database.azure.com -u mysqladmin -p"${{ secrets.DB_PASSWORD }}" -P 3306 solar-mysql-db < solar-backend/solar-mysql-db.sql
 
-
-
+      - name: Remove Temporary Firewall Rule
+        if: always() # This ensures the rule is deleted even if the database import fails!
+        run: az mysql flexible-server firewall-rule delete -g solar-rg -n solar-mysql-server -r GHActionsRule --yes
 
 
 

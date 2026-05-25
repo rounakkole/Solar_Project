@@ -17,7 +17,7 @@
   font-family: var(--font-head);
   font-size: 1.35rem;
   font-weight: 800;
-  background: linear-gradient(90deg, #F59E0B, #FBBF24);
+  background: linear-gradient(90deg, #D97706, #F59E0B);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

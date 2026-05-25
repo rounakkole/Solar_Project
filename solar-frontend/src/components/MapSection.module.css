@@ -25,7 +25,7 @@
   transition: border-color 0.2s, background 0.2s;
 }
 .locBtn:hover { border-color: var(--primary); }
-.locActive   { border-color: var(--primary) !important; background: rgba(245,158,11,0.06) !important; }
+.locActive   { border-color: var(--primary) !important; background: var(--primary-light) !important; }
 
 .locIcon { font-size: 1rem; margin-top: 0.1rem; }
 .locBtn div { display: flex; flex-direction: column; }

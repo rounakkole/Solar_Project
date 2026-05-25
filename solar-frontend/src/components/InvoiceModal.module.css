@@ -1,10 +1,11 @@
 .overlay {
   position: fixed; inset: 0;
-  background: rgba(0,0,0,0.75);
+  background: rgba(0, 0, 0, 0.5);
   z-index: 2000;
   display: flex; align-items: center; justify-content: center;
   padding: 1rem;
   animation: fadeIn 0.2s ease;
+  backdrop-filter: blur(4px);
 }
 @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
 
@@ -47,7 +48,7 @@
 }
 .invLogo {
   font-family: var(--font-head); font-size: 1.2rem; font-weight: 800;
-  background: linear-gradient(90deg,#F59E0B,#FBBF24);
+  background: linear-gradient(90deg, #D97706, #F59E0B);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
 .invAddress { font-size: 0.72rem; color: var(--text2); margin-top: 0.25rem; }
@@ -57,7 +58,7 @@
 .invMeta strong { display: block; font-size: 0.82rem; margin-bottom: 0.3rem; }
 
 .sysBox {
-  background: rgba(245,158,11,0.07);
+  background: var(--primary-light);
   border-radius: var(--radius-sm);
   padding: 0.6rem 0.9rem;
   margin-bottom: 1rem;
