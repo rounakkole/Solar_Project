@@ -13,7 +13,7 @@ const FALLBACK = [
   { product_id:6, product_name:'GI Mount Structure 5kW', category:'structure',price:12000, brand:'Nexus',   description:'Hot-dip galvanized, 150 kmph wind-rated mounting.', stock_quantity:50 },
 ]
 
-const ICONS = { panel: <i class="bi bi-sun-fill"></i>, inverter: <i class="bi bi-lightning-charge-fill"></i>, battery: <i class="bi bi-battery-full"></i>, structure: <i class="bi bi-buildings-fill"></i>, accessory: <i class="bi bi-box-seam-fill"></i>, cable: <i class="bi bi-displayport-fill"></i> }
+const ICONS = { panel: <i class="bi bi-sun-fill"></i>, inverter: <i class="bi bi-lightning-charge-fill"></i>, battery: <i class="bi bi-battery-full"></i>, structure: <i class="bi bi-diagram-3-fill"></i>, accessory: <i class="bi bi-grid-1x2-fill"></i>, cable: <i class="bi bi-displayport-fill"></i> }
 
 export default function Products() {
   const [products, setProducts] = useState(FALLBACK)

@@ -60,3 +60,7 @@
 .stock { margin-top: 0.5rem; }
 .inStock  { font-size: 0.72rem; color: var(--accent); }
 .outStock { font-size: 0.72rem; color: var(--red); }
+
+.imgBox :global(.bi) {
+  color: var(--primary);
+}

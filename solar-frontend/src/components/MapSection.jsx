@@ -43,9 +43,9 @@ export default function MapSection() {
 
           {/* Map */}
           <div className={styles.mapWrap}>
-            <div className={styles.mapBadge}>
+            {/* <div className={styles.mapBadge}>
               <i class="bi bi-pin-map-fill"></i> {loc.name} — {loc.cap}
-            </div>
+            </div> */}
             <iframe
               key={active}
               src={mapSrc}

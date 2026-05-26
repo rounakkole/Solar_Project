@@ -1128,7 +1128,7 @@ Suppliers: {
                       onClick={() => setOrderPaymentMethod('upi')}
                       style={{ padding: '20px 16px', borderRadius: 12, border: '2px solid rgba(16,185,129,0.4)', background: 'rgba(16,185,129,0.07)', cursor: 'pointer', color: 'var(--text)' }}
                     >
-                      <div style={{ fontSize: '2rem', marginBottom: 8 }}>📱</div>
+                      <div style={{ fontSize: '2rem', marginBottom: 8 }}> <i class="bi bi-phone-fill"></i> </div>
                       <div style={{ fontWeight: 700 }}>UPI / QR Code</div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 4 }}>GPay, PhonePe, Paytm</div>
                     </button>
@@ -1179,7 +1179,7 @@ Suppliers: {
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 4 }}>Visa, Mastercard</div>
                     </button>
                   </div>
-                  <button className="btn-outline" style={{ width: '100%' }} onClick={() => setOrderPaymentMethod(null)}>← Back</button>
+                  <button className="btn-outline" style={{ width: '100%' }} onClick={() => setOrderPaymentMethod(null)}>Back</button>
                 </div>
               )}
 
