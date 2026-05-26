@@ -58,11 +58,11 @@ export default function Hero() {
       </div>
 
       {/* LOTTIE */}
-      <!-- <div className={styles.lottie}>
+      {/* <div className={styles.lottie}>
         {animationData && (
           <Lottie animationData={animationData} loop />
         )}
-      </div> -->
+      </div> */}
 
 
       <div className={styles.lottie}>
