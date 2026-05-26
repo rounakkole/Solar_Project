@@ -1,17 +1,22 @@
-import { useEffect, useState } from 'react'
-import Lottie from 'lottie-react'
 import styles from './Hero.module.css'
 
+/*
+import { useEffect, useState } from 'react'
+import Lottie from 'lottie-react'
+*/
+
 export default function Hero() {
+/*
   const [animationData, setAnimationData] = useState(null)
 
   // Fetch Lottie JSON
-  /* useEffect(() => {
+  useEffect(() => {
     fetch("https://lottie.host/bd53fa06-5805-45ce-b1c4-00932821b04d/uUOvrw5CFs.json")
       .then(res => res.json())
       .then(data => setAnimationData(data))
       .catch(err => console.error("Lottie error:", err))
-  }, []) */
+  }, []) 
+*/
 
   return (
     <section className={styles.hero} id="hero">

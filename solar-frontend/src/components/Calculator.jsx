@@ -94,7 +94,7 @@ export default function Calculator() {
         <div className={styles.wrap}>
           {/* ─── Input Panel ─── */}
           <div className={styles.inputPanel}>
-            <h3>⚡ Your Details</h3>
+            <h3>Your Details</h3>
 
             <div className={styles.field}>
               <label>Monthly Electricity Bill (₹)</label>

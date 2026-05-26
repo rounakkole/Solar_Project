@@ -34,7 +34,7 @@ export default function Navbar() {
 
   return (
     <nav className={`${styles.nav} ${scrolled ? styles.scrolled : ''}`}>
-      <Link to="/" className={styles.logo}> <i class="bi bi-sun-fill"></i> ARDOUR GREEN ENERGY</Link>
+      <Link to="/" className={styles.logo}> <i class="bi bi-sun-fill"></i> ARDOUR</Link>
 
       <ul className={`${styles.links} ${open ? styles.open : ''}`}>
         {links.map(l => (

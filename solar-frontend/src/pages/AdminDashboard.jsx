@@ -355,8 +355,8 @@ export default function AdminDashboard() {
   }
 
   const metrics = [
-    { label: 'Total Revenue', value: '₹2.4 Cr', sub: '^ 18% this month', color: 'var(--primary)' },
-    { label: 'Active Orders', value: data.orders?.filter(o => o.status !== 'installed' && o.status !== 'cancelled').length || 0, sub: '^ 12 new this week', color: '#60A5FA' },
+    { label: 'Total Revenue', value: '₹20.4 Lakh', sub: '^ 8% this month', color: 'var(--primary)' },
+    { label: 'Active Orders', value: data.orders?.filter(o => o.status !== 'installed' && o.status !== 'cancelled').length || 0, sub: '^ 3 new this week', color: '#60A5FA' },
     { label: 'Completed Installs', value: data.installations?.filter(i => i.status === 'completed').length || 0, sub: 'Total finished', color: 'var(--accent)' },
     { label: 'Total Customers', value: data.customers?.length || 0, sub: 'Registered', color: '#A78BFA' },
     { label: 'Pending Enquiries', value: data.enquiries?.filter(e => !e.is_responded).length || 0, sub: 'Needs follow-up', color: 'var(--red)' },
@@ -1193,9 +1193,9 @@ Suppliers: {
                   <div style={{ fontSize: '3.5rem', marginBottom: 12 }}> <i class="bi bi-phone-fill"></i> </div>
                   <p style={{ fontWeight: 600, fontSize: '1rem', marginBottom: 8 }}>Pay via UPI</p>
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: 8, lineHeight: 1.6 }}>
-                    Click below to open Razorpay's secure payment.<br/>
+                    Click below to open Razorpay's secure payment test screen.<br/>
                     Select <strong style={{ color: 'var(--text)' }}>UPI</strong> inside and pay via GPay, PhonePe, Paytm or QR.<br/>
-                    <strong style={{ color: '#10B981' }}>Payment is verified automatically — no fake confirmations.</strong>
+                    <strong style={{ color: '#10B981' }}>No real money will be charged. Automatic verification simulation.</strong>
                   </p>
                   <div style={{ background: 'rgba(16,185,129,0.07)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 8, padding: '10px 14px', marginBottom: 20, fontSize: '0.82rem', color: 'var(--text-muted)' }}>
                     UPI ID: <strong style={{ color: 'var(--text)' }}>name@okbank</strong> 
@@ -1245,9 +1245,9 @@ Suppliers: {
                       }
                     }}
                   >
-                    Open UPI Payment →
+                    Open UPI Payment
                   </button>
-                  <button className="btn-outline" style={{ width: '100%' }} onClick={() => setOrderPaymentMethod('choose')}>← Back</button>
+                  <button className="btn-outline" style={{ width: '100%' }} onClick={() => setOrderPaymentMethod('choose')}>Back</button>
                 </div>
               )}
 
