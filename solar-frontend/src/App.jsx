@@ -75,10 +75,14 @@ export default function App() {
 
   const [isAuth, setIsAuth] = useState(!!localStorage.getItem("token"));
 
+  const location = useLocation();
+  const isAdminPage = location.pathname.startsWith('/admin');
+
   return (
     <ToastCtx.Provider value={addToast}>
       <CartCtx.Provider value={cartValue}>
-        <Navbar />
+        {/* Navbar if NOT on the admin workspace panel */}
+        {!isAdminPage && <Navbar />}
         <CartSidebar />
 
       <Routes>

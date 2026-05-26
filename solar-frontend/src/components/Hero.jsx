@@ -64,9 +64,15 @@ export default function Hero() {
         )}
       </div> */}
 
-
       <div className={styles.lottie}>
-        <img src="/LOTTIE-animation.gif" alt="Animated illustration" />
+        <img 
+          src="/LOTTIE-animation.gif" alt="Animated illustration" 
+          style={{ 
+            width: '100%', 
+            height: 'auto', 
+            display: 'block' 
+          }} 
+        />
       </div>
 
       {/* SCROLL */}

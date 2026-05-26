@@ -61,7 +61,7 @@ export default function Navbar() {
           onClick={() => setIsCartOpen(true)}
           style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', position: 'relative' }}
         >
-          <i className="bi bi-cart4" style={{ padding: '0 10px' }}></i>
+          <i className="bi bi-cart4" style={{ padding: '0 20px' }}></i>
           {cart.length > 0 && (
             <span style={{ position: 'absolute', top: '-8px', right: '-8px', background: 'var(--primary)', color: 'white', borderRadius: '50%', padding: '2px 6px', fontSize: '0.8rem', fontWeight: 'bold' }}>
               {cart.length}

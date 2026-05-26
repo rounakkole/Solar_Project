@@ -561,7 +561,7 @@ Suppliers: {
             </button>
           ))}
         </nav>
-        <Link to="/" className={styles.sideBack}>← Back to Website</Link>
+        <Link to="/" className={styles.sideBack}> <i class="bi bi-arrow-left-square-fill"></i> Back to Website</Link>
       </aside>
 
       {/* Main */}
