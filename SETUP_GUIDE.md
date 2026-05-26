@@ -1,6 +1,6 @@
-# 🌞 Solar Panel Project - Setup Guide
+# Solar Panel Project - Setup Guide
 
-## 📋 Prerequisites
+## Prerequisites
 
 Make sure you have installed:
 - **Node.js** (v14+) - [Download](https://nodejs.org/)
@@ -9,7 +9,7 @@ Make sure you have installed:
 
 ---
 
-## 🚀 Installation Steps
+## Installation Steps
 
 ### Step 1: Setup MySQL Database
 
@@ -19,11 +19,11 @@ Make sure you have installed:
 mysql -u root
 
 # In MySQL terminal:
-CREATE DATABASE solar_db;
+CREATE DATABASE solar-mysql-db;
 EXIT;
 
 # Import database structure:
-mysql -u root solar_db < solar_database.sql
+mysql -u root solar-mysql-db < solar-mysql-db.sql
 ```
 
 #### On macOS/Linux:
@@ -33,11 +33,11 @@ mysql -u root -p
 
 # When prompted, enter your MySQL password (or press Enter if no password)
 # In MySQL terminal:
-CREATE DATABASE solar_db;
+CREATE DATABASE solar-mysql-db;
 EXIT;
 
 # Import database structure:
-mysql -u root -p solar_db < solar_database.sql
+mysql -u root -p solar-mysql-db < solar-mysql-db.sql
 ```
 
 ### Step 2: Setup Backend
@@ -57,25 +57,24 @@ npm run dev
 
 **Expected Output:**
 ```
-🚀 Starting Solar Panel Backend Server...
+Starting Solar Panel Backend Server...
 
-📦 Database Configuration:
+Database Configuration:
    Host: localhost
    Port: 3306
    User: root
-   Database: solar_db
+   Database: solar-mysql-db
 
-🔗 Testing Database Connection...
-✅ MySQL Connected Successfully!
-✅ Database: solar_db
+Testing Database Connection...
+MySQL Connected Successfully!
+Database: solar-mysql-db
 
-✅ Server Status: ONLINE
-📍 Server running on http://localhost:5000
-🔍 Health check: http://localhost:5000/api/health
-🌐 Frontend URL: http://localhost:3000
-📊 Database: solar_db
+Server Status: ONLINE
+Server running on http://localhost:5000
+Health check: http://localhost:5000/api/health
+Frontend URL: http://localhost:3000
 
-🚀 All systems operational!
+All systems operational!
 ```
 
 ### Step 3: Setup Frontend
@@ -96,12 +95,12 @@ npm run dev
 ```
   VITE v4.x.x  ready in xxx ms
 
-  ➜  Local:   http://localhost:5173/
+  >>  Local:   http://localhost:5173/
 ```
 
 ---
 
-## 🔗 API Endpoints
+## API Endpoints
 
 After setup, you can test the API:
 
@@ -124,9 +123,9 @@ GET http://localhost:5000/api/products
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
-### ❌ Error: "EADDRINUSE: address already in use :::5000"
+### Error: "EADDRINUSE: address already in use :::5000"
 **Solution:** Port 5000 is already in use.
 ```bash
 # Kill the process using port 5000
@@ -134,18 +133,16 @@ GET http://localhost:5000/api/products
 netstat -ano | findstr :5000
 taskkill /PID <PID> /F
 
-# macOS/Linux:
-lsof -ti:5000 | xargs kill -9
 ```
 
-### ❌ Error: "ENOENT: no such file or directory, open '.env'"
+### Error: "ENOENT: no such file or directory, open '.env'"
 **Solution:** The .env file is already in the project. Make sure you're in the correct directory.
 ```bash
 cd solar-backend
 ls -la .env  # Should show the file
 ```
 
-### ❌ Error: "ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'localhost'"
+### Error: "ER_ACCESS_DENIED_ERROR: Access denied for user 'root'@'localhost'"
 **Solution:** MySQL password is wrong or user doesn't exist.
 ```bash
 # Update .env with correct credentials
@@ -153,20 +150,20 @@ nano .env
 # Edit DB_USER and DB_PASSWORD
 ```
 
-### ❌ Error: "ER_BAD_DB_ERROR: Unknown database 'solar_db'"
+### Error: "ER_BAD_DB_ERROR: Unknown database 'solar-mysql-db'"
 **Solution:** Database doesn't exist yet.
 ```bash
 # Create the database
-mysql -u root -e "CREATE DATABASE solar_db;"
+mysql -u root -e "CREATE DATABASE solar-mysql-db;"
 
 # If using a password:
-mysql -u root -p -e "CREATE DATABASE solar_db;"
+mysql -u root -p -e "CREATE DATABASE solar-mysql-db;"
 
 # Import the schema
-mysql -u root solar_db < solar_database.sql
+mysql -u root solar-mysql-db < solar-mysql-db.sql
 ```
 
-### ❌ Error: "Can't connect to MySQL server on 'localhost:3306'"
+### Error: "Can't connect to MySQL server on 'localhost:3306'"
 **Solution:** MySQL is not running.
 
 **Windows:** Start MySQL from Services
@@ -174,50 +171,17 @@ mysql -u root solar_db < solar_database.sql
 services.msc  # Search and start "MySQL80" service
 ```
 
-**macOS:**
-```bash
-brew services start mysql
-```
-
-**Linux:**
-```bash
-sudo systemctl start mysql
-# or
-sudo service mysql start
-```
-
-### ❌ Frontend can't connect to backend
+### Frontend can't connect to backend
 **Solution:** Make sure backend is running on port 5000 and CORS is configured.
 Check `.env` in backend has:
 ```
 FRONTEND_URL=http://localhost:5173
 ```
 
----
-
-## 📁 Project Structure
-
-```
-solar-project/
-├── solar-backend/          # Node.js Express API
-│   ├── config/
-│   │   ├── db.js          # ✅ FIXED: Database connection pool
-│   │   └── email.js
-│   ├── routes/            # API endpoints (already working)
-│   ├── middleware/
-│   ├── server.js          # ✅ FIXED: Now initializes database
-│   ├── .env               # ✅ FIXED: Port 3306
-│   └── package.json
-│
-└── solar-frontend/        # React + Vite
-    ├── src/
-    ├── vite.config.js
-    └── package.json
-```
 
 ---
 
-## 🔐 Environment Variables
+## Environment Variables
 
 The `.env` file is already configured. Key variables:
 
@@ -229,10 +193,10 @@ FRONTEND_URL=http://localhost:5000
 
 # Database
 DB_HOST=localhost
-DB_PORT=3306              # ✅ FIXED: Changed from 3307
+DB_PORT=3306              # Changed from 3307
 DB_USER=root
 DB_PASSWORD=""
-DB_NAME=solar_db
+DB_NAME=solar-mysql-db
 
 # JWT
 JWT_SECRET=your_super_secret_jwt_key_change_this_in_production_12345
@@ -243,19 +207,19 @@ RAZORPAY_KEY_ID=...
 RAZORPAY_KEY_SECRET=...
 
 # Email (Optional)
-SMTP_USER=your_email@gmail.com
-SMTP_PASSWORD=your_app_password
+SMTP_USER=name@gmail.com
+SMTP_PASSWORD=your_password
 ```
 
 ---
 
-## ✅ Testing the Connection
+## Testing the Connection
 
 ### Test 1: Database Connection
 ```bash
 cd solar-backend
 npm run dev
-# You should see: ✅ MySQL Connected Successfully!
+# You should see: MySQL Connected Successfully!
 ```
 
 ### Test 2: API Health Check
@@ -277,7 +241,7 @@ curl http://localhost:5000/api/products
 
 ---
 
-## 📞 Support
+## Support
 
 If you still have issues:
 
@@ -289,12 +253,12 @@ If you still have issues:
 
 ---
 
-## 🚀 Next Steps
+## Next Steps
 
-1. ✅ Setup MySQL and database
-2. ✅ Run backend with `npm run dev`
-3. ✅ Run frontend in another terminal
-4. ✅ Open http://localhost:5173
-5. 🎉 Enjoy your solar panel application!
+1. Setup MySQL and database
+2. Run backend with `npm run dev`
+3. Run frontend in another terminal
+4. Open http://localhost:5173
+5. Enjoy your solar panel application!
 
 

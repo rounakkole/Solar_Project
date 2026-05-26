@@ -3,39 +3,39 @@
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 solar-project/
-├── solar-frontend/          ← React (Vite) frontend
+├── solar-frontend/          << React (Vite) frontend
 │   ├── src/
-│   │   ├── components/      ← Navbar, Hero, Products, Calculator, Map, Contact, etc.
-│   │   ├── pages/           ← AdminDashboard
-│   │   ├── api/             ← axios.js (API calls)
-│   │   └── styles/          ← global.css
+│   │   ├── components/      << Navbar, Hero, Products, Calculator, Map, Contact, etc.
+│   │   ├── pages/           << AdminDashboard
+│   │   ├── api/             << axios.js (API calls)
+│   │   └── styles/          << global.css
 │   └── package.json
 │
-├── solar-backend/           ← Node.js + Express REST API
+├── solar-backend/           << Node.js + Express REST API
 │   ├── config/
-│   │   ├── db.js            ← MySQL connection pool
-│   │   └── email.js         ← Nodemailer email service
+│   │   ├── db.js            << MySQL connection pool
+│   │   └── email.js         << Nodemailer email service
 │   ├── routes/
-│   │   ├── customers.js     ← CRUD for customers
-│   │   ├── suppliers.js     ← CRUD for suppliers
-│   │   ├── products.js      ← CRUD for products
-│   │   ├── orders.js        ← Orders + items (transaction)
-│   │   ├── installations.js ← Installation scheduling
-│   │   ├── payments.js      ← Payment records
-│   │   └── enquiries.js     ← Contact form + email notification
-│   ├── server.js            ← Main Express app
+│   │   ├── customers.js     << CRUD for customers
+│   │   ├── suppliers.js     << CRUD for suppliers
+│   │   ├── products.js      << CRUD for products
+│   │   ├── orders.js        << Orders + items (transaction)
+│   │   ├── installations.js << Installation scheduling
+│   │   ├── payments.js      << Payment records
+│   │   └── enquiries.js     << Contact form + email notification
+│   ├── server.js            << Main Express app
 │   └── package.json
 │
-└── solar_database.sql       ← Full MySQL schema + sample data
+└── solar-mysql-db.sql       << Full MySQL schema + sample data
 ```
 
 ---
 
-## 🚀 Setup Instructions
+## Setup Instructions
 
 ### Step 1 — MySQL Database
 
@@ -44,10 +44,10 @@ solar-project/
 3. Run the SQL file:
 
 ```bash
-mysql -u root -p < solar_database.sql
+mysql -u root -p < solar-mysql-db.sql
 ```
 
-Or in phpMyAdmin: Import → choose `solar_database.sql`
+Or in phpMyAdmin: Import >> choose `solar-mysql-db.sql`
 
 ---
 
@@ -96,30 +96,30 @@ npm run dev
 
 ### Step 4 — Email Notifications (Optional)
 
-1. Go to your Google Account → Security → App Passwords
+1. Go to your Google Account >> Security >> App Passwords
 2. Generate an app password for "Mail"
 3. Add to `solar-backend/.env`:
 ```
 EMAIL_USER=your_email@gmail.com
-EMAIL_PASS=your_16_char_app_password
+EMAIL_PASS=your_password
 ```
 
 ---
 
-## 🌐 Pages & Features
+## Pages & Features
 
 | Page / Feature        | URL              | Description                           |
 |-----------------------|------------------|---------------------------------------|
 | Home                  | `/`              | Hero, stats, services, products       |
-| Solar Calculator      | `/#calculator`   | Enter bill → see savings + chart      |
+| Solar Calculator      | `/#calculator`   | Enter bill >> see savings + chart      |
 | PDF Invoice           | Modal on calc    | Download branded jsPDF invoice        |
 | Google Maps           | `/#map-section`  | 5 installation locations              |
-| Contact / Enquiry     | `/#contact`      | Form → DB + email notification        |
+| Contact / Enquiry     | `/#contact`      | Form >> DB + email notification        |
 | Admin Dashboard       | `/admin`         | 8-tab panel: all DB tables            |
 
 ---
 
-## 🗄️ Database Tables
+## Database Tables
 
 | Table           | Purpose                              |
 |-----------------|--------------------------------------|
@@ -136,7 +136,7 @@ EMAIL_PASS=your_16_char_app_password
 
 ---
 
-## 🔗 API Endpoints
+## API Endpoints
 
 ### Customers
 ```
@@ -167,13 +167,13 @@ GET    /api/orders/stats/revenue
 ### Enquiries
 ```
 GET    /api/enquiries
-POST   /api/enquiries        ← triggers email notification
+POST   /api/enquiries        << triggers email notification
 PATCH  /api/enquiries/:id/respond
 ```
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Layer     | Technology                          |
 |-----------|-------------------------------------|
