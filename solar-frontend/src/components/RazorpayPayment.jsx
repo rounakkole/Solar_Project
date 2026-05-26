@@ -39,7 +39,7 @@ export default function RazorpayPayment({
         message: `Your transaction was successful for Order #${orderId}. Thank you for your payment.`
       })
 
-      alert('Payment Successful ✅')
+      alert('Payment Successful')
 
       onSuccess()
 

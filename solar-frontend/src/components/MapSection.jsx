@@ -31,7 +31,7 @@ export default function MapSection() {
                 className={`${styles.locBtn} ${active === i ? styles.locActive : ''}`}
                 onClick={() => setActive(i)}
               >
-                <span className={styles.locIcon}>📍</span>
+                <span className={styles.locIcon}> <i class="bi bi-pin-map-fill"></i> </span>
                 <div>
                   <strong>{l.name}</strong>
                   <span>{l.city}</span>
@@ -44,7 +44,7 @@ export default function MapSection() {
           {/* Map */}
           <div className={styles.mapWrap}>
             <div className={styles.mapBadge}>
-              📍 {loc.name} — {loc.cap}
+              <i class="bi bi-pin-map-fill"></i> {loc.name} — {loc.cap}
             </div>
             <iframe
               key={active}

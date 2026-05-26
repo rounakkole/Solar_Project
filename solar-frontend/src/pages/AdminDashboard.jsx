@@ -8,10 +8,6 @@ import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 
 // ─── Helpers ─────────────────────────────────────────────────
-function tabIcon(t) {
-  const icons = { Dashboard:'📊', Customers:'👥', Suppliers:'🏭', Products:'📦', Orders:'🛒', Installations:'🔧', Payments:'💳', Enquiries:'📩' }
-  return icons[t] || '📋'
-}
 
 const StatusBadge = ({ s }) => {
   const map = {
@@ -49,7 +45,7 @@ function AddModal({ title, fields, onSave, onClose, initialData }) {
     <div className={styles.overlay} onClick={e => e.target === e.currentTarget && onClose()}>
       <div className={styles.modal}>
         <div className={styles.modalHead}>
-          <h3>➕ {title}</h3>
+          <h3>{title}</h3>
           <button className={styles.closeBtn} onClick={onClose}>✕</button>
         </div>
         <div className={styles.modalBody}>
@@ -310,7 +306,7 @@ export default function AdminDashboard() {
 
     try {
       await api.delete(`/products/${id}`)
-      toast("Product deleted 🗑")
+      toast("Product deleted")
       fetchAllData()
     } catch (err) {
       console.error(err)
@@ -331,7 +327,7 @@ export default function AdminDashboard() {
     if (!window.confirm("Delete order?")) return
     try {
       await api.delete(`/orders/${id}`)
-      toast("Order deleted 🗑")
+      toast("Order deleted")
       fetchAllData()
     } catch (err) {
       toast("Cannot delete order")
@@ -351,7 +347,7 @@ export default function AdminDashboard() {
     if (!window.confirm("Delete enquiry?")) return
     try {
       await api.delete(`/enquiries/${id}`)
-      toast("Enquiry deleted 🗑")
+      toast("Enquiry deleted")
       fetchAllData()
     } catch (err) {
       toast("Cannot delete enquiry")
@@ -359,8 +355,8 @@ export default function AdminDashboard() {
   }
 
   const metrics = [
-    { label: 'Total Revenue', value: '₹2.4 Cr', sub: '↑ 18% this month', color: 'var(--primary)' },
-    { label: 'Active Orders', value: data.orders?.filter(o => o.status !== 'installed' && o.status !== 'cancelled').length || 0, sub: '↑ 12 new this week', color: '#60A5FA' },
+    { label: 'Total Revenue', value: '₹2.4 Cr', sub: '^ 18% this month', color: 'var(--primary)' },
+    { label: 'Active Orders', value: data.orders?.filter(o => o.status !== 'installed' && o.status !== 'cancelled').length || 0, sub: '^ 12 new this week', color: '#60A5FA' },
     { label: 'Completed Installs', value: data.installations?.filter(i => i.status === 'completed').length || 0, sub: 'Total finished', color: 'var(--accent)' },
     { label: 'Total Customers', value: data.customers?.length || 0, sub: 'Registered', color: '#A78BFA' },
     { label: 'Pending Enquiries', value: data.enquiries?.filter(e => !e.is_responded).length || 0, sub: 'Needs follow-up', color: 'var(--red)' },
@@ -372,12 +368,12 @@ export default function AdminDashboard() {
     Customers: {
       title: 'New Customer',
       fields: [
-        { key: 'name', label: 'Full Name', placeholder: 'Rajesh Kumar' },
-        { key: 'email', label: 'Email', placeholder: 'rajesh@email.com' },
+        { key: 'name', label: 'Full Name', placeholder: 'name lastname' },
+        { key: 'email', label: 'Email', placeholder: 'name@gmail.com' },
         { key: 'phone', label: 'Phone', placeholder: '9876543210' },
         { key: 'address', label: 'Address', placeholder: 'Full address' },
-        { key: 'pincode', label: 'Pincode', placeholder: '413501' },
-        { key: 'city', label: 'City', placeholder: 'Nagpur' },
+        { key: 'pincode', label: 'Pincode', placeholder: '411001' },
+        { key: 'city', label: 'City', placeholder: 'Pune' },
         { key: 'property_type', label: 'Property Type', type: 'select', options: ['residential', 'commercial', 'industrial'] },
       ],
       onSave: async (rec) => {
@@ -385,7 +381,7 @@ export default function AdminDashboard() {
           await api.post('/customers', rec)
           const res = await api.get('/customers')
           setData(d => ({ ...d, customers: res.data }))
-          toast("Customer added successfully!", '👥')
+          toast("Customer added successfully!", <i class="bi bi-people-fill"></i> )
         } catch (err) {
           console.error(err)
           const msg = err.response?.data?.message || "Error adding customer"
@@ -401,19 +397,19 @@ Suppliers: {
     {
       key: 'company_name',
       label: 'Company Name',
-      placeholder: 'Exide Industries'
+      placeholder: 'Name Industries'
     },
 
     {
       key: 'contact_person',
       label: 'Contact Person',
-      placeholder: 'Mr. Roy'
+      placeholder: 'name lastname'
     },
 
     {
       key: 'email',
       label: 'Email',
-      placeholder: 'supplier@email.com'
+      placeholder: 'name@gmail.com'
     },
 
     {
@@ -437,7 +433,7 @@ Suppliers: {
     {
       key: 'gst_number',
       label: 'GST Number',
-      placeholder: '27ABCDE1234F1Z5'
+      placeholder: '12ABCDE1234F1Z1'
     },
 
     {
@@ -497,7 +493,7 @@ Suppliers: {
         { key: 'customer_id', label: 'Customer', type: 'select',
           options: (data.customers || []).map(c => ({ label: `${c.name} (ID: ${c.customer_id})`, value: c.customer_id })) },
         { key: 'system_size_kw', label: 'System Size (kW)', type: 'number', placeholder: '5' },
-        { key: 'total_amount', label: 'Total Amount (₹)', type: 'number', placeholder: '247000' },
+        { key: 'total_amount', label: 'Total Amount (₹)', type: 'number', placeholder: '250000' },
       ],
       onSave: async (rec) => {
         try {
@@ -509,7 +505,7 @@ Suppliers: {
           })
           const res = await api.get('/orders')
           setData(d => ({ ...d, orders: res.data }))
-          toast("Order added successfully!", '🛒')
+          toast("Order added successfully!", <i class="bi bi-cart4"></i> )
         } catch (err) {
           console.error(err)
           const msg = err.response?.data?.message || "Error adding order"
@@ -521,9 +517,10 @@ Suppliers: {
     Enquiries: {
       title: 'New Enquiry',
       fields: [
-        { key: 'name', label: 'Name', placeholder: 'Customer name' },
+        { key: 'name', label: 'Name', placeholder: 'name lastname' },
         { key: 'phone', label: 'Phone', placeholder: '9876543210' },
-        { key: 'email', label: 'Email', placeholder: 'email@example.com' },
+        { key: 'email', label: 'Email', placeholder: 'name@gmail.com' },
+        { key: 'city', label: 'City', placeholder: 'Pune' },
         { key: 'service_type', label: 'Service', type: 'select', options: ['Residential Solar', 'Commercial Solar', 'Industrial Solar', 'AMC', 'Subsidy Help'] },
         { key: 'monthly_bill', label: 'Monthly Bill', type: 'number', placeholder: '3500' },
       ],
@@ -532,7 +529,7 @@ Suppliers: {
           await api.post('/enquiries', rec)
           const res = await api.get('/enquiries')
           setData(d => ({ ...d, enquiries: res.data }))
-          toast("Enquiry added successfully!", '📩')
+          toast("Enquiry added successfully!", <i class="bi bi-envelope-arrow-down-fill"></i> )
         } catch (err) {
           console.error(err)
           const msg = err.response?.data?.message || "Error adding enquiry"
@@ -547,7 +544,7 @@ Suppliers: {
       {/* Sidebar */}
       <aside className={styles.sidebar}>
         <Link to="/" className={styles.sideLogoWrap}>
-          <div className={styles.sideLogo}>☀</div>
+          <div className={styles.sideLogo}> <i class="bi bi-sun-fill"></i> </div>
           <div>
             <div className={styles.sideLogoText}>SolarTech Pro</div>
             <div className={styles.sideLogoSub}>Admin Panel</div>
@@ -560,7 +557,7 @@ Suppliers: {
               className={`${styles.navItem} ${tab === t ? styles.navActive : ''}`}
               onClick={() => setTab(t)}
             >
-              {tabIcon(t)} {t}
+              {t}
             </button>
           ))}
         </nav>
@@ -590,7 +587,7 @@ Suppliers: {
               }
               const rows = tabDataMap[tab]
               if (!rows || rows.length === 0) {
-                toast('No data to export', '⚠')
+                toast('No data to export', <i class="bi bi-exclamation-triangle-fill"></i> )
                 return
               }
               const headers = Object.keys(rows[0])
@@ -611,15 +608,15 @@ Suppliers: {
               a.download = `${tab.toLowerCase()}_${new Date().toISOString().slice(0, 10)}.csv`
               a.click()
               URL.revokeObjectURL(url)
-              toast(`${tab} exported as CSV!`, '✅')
-            }}>⬇ Export CSV</button>
+              toast(`${tab} exported as CSV!`, <i class="bi bi-check-square-fill"></i>)
+            }}> <i class="bi bi-arrow-down-square-fill"></i> Export CSV</button>
             {ADD_CONFIGS[tab] && (
               <button className="btn-primary" onClick={() => setAddModal(ADD_CONFIGS[tab])}>
-                ➕ Add {tab.slice(0, -1)}
+                <i class="bi bi-plus-square-fill"></i> Add {tab.slice(0, -1)}
               </button>
             )}
             <button className="btn-outline" onClick={handleLogout}>
-              🚪 Logout
+              <i class="bi bi-arrow-bar-right"></i> Logout
             </button>
           </div>
         </div>
@@ -638,7 +635,7 @@ Suppliers: {
             </div>
             <div className={styles.dashGrid}>
               <div className={styles.dashCard}>
-                <h3>📦 Recent Orders</h3>
+                <h3>Recent Orders</h3>
                 <DataTable heads={['Order', 'Customer', 'Size', 'Amount', 'Status']}>
                   {data.orders?.slice(0, 5).map(o => (
                     <tr key={o.order_id}>
@@ -652,7 +649,7 @@ Suppliers: {
                 </DataTable>
               </div>
               <div className={styles.dashCard}>
-                <h3>📩 Recent Enquiries</h3>
+                <h3>Recent Enquiries</h3>
                 <DataTable heads={['Name', 'Phone', 'Service', 'Status']}>
                   {data.enquiries?.slice(0, 5).map(e => (
                     <tr key={e.enquiry_id}>
@@ -824,7 +821,7 @@ Suppliers: {
         <div className={styles.overlay} onClick={() => setViewCustomer(null)}>
           <div className={styles.modal} onClick={e => e.stopPropagation()}>
             <div className={styles.modalHead}>
-              <h3>👤 Customer Details</h3>
+              <h3>Customer Details</h3>
               <button className={styles.closeBtn} onClick={() => setViewCustomer(null)}>✕</button>
             </div>
 
@@ -909,7 +906,7 @@ Suppliers: {
         <div className={styles.overlay} onClick={() => setViewSupplier(null)}>
           <div className={styles.modal} onClick={e => e.stopPropagation()}>
             <div className={styles.modalHead}>
-              <h3>🏭 Supplier Details</h3>
+              <h3>Supplier Details</h3>
               <button className={styles.closeBtn} onClick={() => setViewSupplier(null)}>✕</button>
             </div>
 
@@ -993,7 +990,7 @@ Suppliers: {
         <div className={styles.overlay} onClick={() => setViewProduct(null)}>
           <div className={styles.modal} onClick={e => e.stopPropagation()}>
             <div className={styles.modalHead}>
-              <h3>📦 Product Details</h3>
+              <h3>Product Details</h3>
               <button className={styles.closeBtn} onClick={() => setViewProduct(null)}>✕</button>
             </div>
 
@@ -1073,7 +1070,19 @@ Suppliers: {
         <div className={styles.overlay} onClick={() => { setViewOrder(null); setOrderPaymentMethod(null); }}>
           <div className={styles.modal} onClick={e => e.stopPropagation()} style={{ maxWidth: orderPaymentMethod ? 460 : 500 }}>
             <div className={styles.modalHead}>
-              <h3>{orderPaymentMethod === 'success' ? 'Payment Complete' : orderPaymentMethod === 'upi' ? '📱 Pay via UPI' : orderPaymentMethod === 'choose' ? '💳 Select Payment' : '🛒 Order Details'}</h3>
+
+              <h3>
+                {orderPaymentMethod === 'success' ? (
+                  'Payment Complete'
+                ) : orderPaymentMethod === 'upi' ? (
+                  <><i className="bi bi-phone-fill"></i> Pay via UPI</>
+                ) : orderPaymentMethod === 'choose' ? (
+                  <><i className="bi bi-credit-card-fill"></i> Select Payment</>
+                ) : (
+                  <><i className="bi bi-cart4"></i> Order Details</>
+                )}
+              </h3>
+
               <button className={styles.closeBtn} onClick={() => { setViewOrder(null); setOrderPaymentMethod(null); }}>✕</button>
             </div>
             <div className={styles.modalBody}>
@@ -1165,7 +1174,7 @@ Suppliers: {
                       }}
                       style={{ padding: '20px 16px', borderRadius: 12, border: '2px solid rgba(99,102,241,0.4)', background: 'rgba(99,102,241,0.07)', cursor: 'pointer', color: 'var(--text)' }}
                     >
-                      <div style={{ fontSize: '2rem', marginBottom: 8 }}>💳</div>
+                      <div style={{ fontSize: '2rem', marginBottom: 8 }}> <i class="bi bi-credit-card-fill"></i> </div>
                       <div style={{ fontWeight: 700 }}>Card / Net Banking</div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 4 }}>Visa, Mastercard</div>
                     </button>
@@ -1181,7 +1190,7 @@ Suppliers: {
                     <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>ORD-{String(viewOrder.order_id).padStart(3,'0')}</span>
                     <span style={{ color: 'var(--primary)', fontWeight: 700 }}>₹{Number(viewOrder.total_amount).toLocaleString('en-IN')}</span>
                   </div>
-                  <div style={{ fontSize: '3.5rem', marginBottom: 12 }}>📱</div>
+                  <div style={{ fontSize: '3.5rem', marginBottom: 12 }}> <i class="bi bi-phone-fill"></i> </div>
                   <p style={{ fontWeight: 600, fontSize: '1rem', marginBottom: 8 }}>Pay via UPI</p>
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: 8, lineHeight: 1.6 }}>
                     Click below to open Razorpay's secure payment.<br/>
@@ -1189,7 +1198,7 @@ Suppliers: {
                     <strong style={{ color: '#10B981' }}>Payment is verified automatically — no fake confirmations.</strong>
                   </p>
                   <div style={{ background: 'rgba(16,185,129,0.07)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 8, padding: '10px 14px', marginBottom: 20, fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                    UPI ID: <strong style={{ color: 'var(--text)' }}>koleprathmesh-2@oksbi</strong>
+                    UPI ID: <strong style={{ color: 'var(--text)' }}>koleprathmesh-2@oksbi</strong> <!-- ToDo: change -->
                   </div>
                   <button
                     className="btn-primary"
@@ -1210,7 +1219,7 @@ Suppliers: {
                           description: `ORD-${String(viewOrder.order_id).padStart(3,'0')}`,
                           order_id: data.data.razorpay_order_id,
                           prefill: { contact: viewOrder.customer_phone || '', email: viewOrder.customer_email || '' },
-                          notes: { upi_id: 'koleprathmesh-2@oksbi' },
+                          notes: { upi_id: 'koleprathmesh-2@oksbi' }, <!-- ToDo: change -->
                           handler: async function (response) {
                             try {
                               await api.post('/razorpay/verify', {
@@ -1245,7 +1254,7 @@ Suppliers: {
               {/* ── PAYMENT SUCCESS VIEW ── */}
               {orderPaymentMethod === 'success' && (
                 <div style={{ textAlign: 'center', padding: '10px 0 20px' }}>
-                  <div style={{ fontSize: '4rem', marginBottom: 12 }}>🎉</div>
+                  <div style={{ fontSize: '4rem', marginBottom: 12 }}> <i class="bi bi-stars"></i> </div>
                   <h3 style={{ color: '#10B981', fontSize: '1.3rem', marginBottom: 8 }}>Payment Successful!</h3>
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: 20 }}>
                     Your payment has been recorded successfully.
@@ -1265,7 +1274,7 @@ Suppliers: {
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Payment Method</span>
-                      <span style={{ fontWeight: 600 }}>📱 UPI</span>
+                      <span style={{ fontWeight: 600 }}> <i class="bi bi-phone-fill"></i> UPI</span>
                     </div>
                   </div>
                   <button
@@ -1289,7 +1298,7 @@ Suppliers: {
         <div className={styles.overlay} onClick={() => setViewEnquiry(null)}>
           <div className={styles.modal} onClick={e => e.stopPropagation()}>
             <div className={styles.modalHead}>
-              <h3>📩 Enquiry Details</h3>
+              <h3>Enquiry Details</h3>
               <button className={styles.closeBtn} onClick={() => setViewEnquiry(null)}>✕</button>
             </div>
             <div className={styles.modalBody}>

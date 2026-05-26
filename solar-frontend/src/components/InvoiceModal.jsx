@@ -9,7 +9,7 @@ function fmt(n) { return Math.round(n).toLocaleString('en-IN') }
 export default function InvoiceModal({ result, bill, onClose }) {
   const toast  = useToast()
   const invRef = useRef(null)
-  const invNo  = 'INV-2025-' + Math.floor(Math.random() * 900 + 100)
+  const invNo  = 'INV-2026-' + Math.floor(Math.random() * 900 + 100)
   const today  = new Date().toLocaleDateString('en-IN')
   const sizeKw = result.sizeKw.toFixed(1)
   const panelCount = Math.ceil(result.sizeKw * 2.5)
@@ -35,17 +35,17 @@ export default function InvoiceModal({ result, bill, onClose }) {
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(12)
     doc.setTextColor(0, 0, 0)
-    doc.text('SOLARTECH PRO — INVOICE', 105, 11, { align: 'center' })
+    doc.text('ARDOUR GREEN ENERGY — INVOICE', 105, 11, { align: 'center' })
 
     // Logo & company
     doc.setTextColor(245, 158, 11)
     doc.setFontSize(16)
-    doc.text('☀ SolarTech Pro', 15, 28)
+    doc.text('ARDOUR GREEN ENERGY', 15, 28)
     doc.setTextColor(180, 180, 180)
     doc.setFontSize(8)
     doc.setFont('helvetica', 'normal')
-    doc.text('Plot 45, MIDC Nagpur, Maharashtra 440018', 15, 35)
-    doc.text('GST: 27AABCS1234D1Z5  |  Ph: +91 98765 43210  |  info@solartechpro.in', 15, 41)
+    doc.text('Plot 45, MIDC Pune, Maharashtra 411001', 15, 35)
+    doc.text('GST: 12AABCS1234D1Z5  |  Ph: +91 98765 43210  |  info@gmail.in', 15, 41)
 
     // Divider
     doc.setDrawColor(245, 158, 11)
@@ -108,18 +108,18 @@ export default function InvoiceModal({ result, bill, onClose }) {
     doc.setTextColor(120, 120, 120)
     doc.setFontSize(8)
     doc.setFont('helvetica', 'normal')
-    doc.text('Thank you for choosing SolarTech Pro. Warranty: 25 years panel, 10 years inverter.', 105, 278, { align: 'center' })
+    doc.text('Thank you for choosing ARDOUR GREEN ENERGY. Warranty: 10 years panel, 5 years inverter.', 105, 278, { align: 'center' })
     doc.text('Computer generated invoice — no signature required.', 105, 284, { align: 'center' })
 
     doc.save(`SolarTech_${invNo}.pdf`)
-    toast('PDF Invoice downloaded! 📄', '✅')
+    toast('PDF Invoice downloaded!', <i class="bi bi-check-square-fill"></i> )
   }
 
   return (
     <div className={styles.overlay} onClick={e => e.target === e.currentTarget && onClose()}>
       <div className={styles.modal}>
         <div className={styles.header}>
-          <h3>📄 Invoice Preview</h3>
+          <h3>Invoice Preview</h3>
           <button className={styles.close} onClick={onClose}>✕</button>
         </div>
 
@@ -128,8 +128,8 @@ export default function InvoiceModal({ result, bill, onClose }) {
             {/* Header */}
             <div className={styles.invHead}>
               <div>
-                <div className={styles.invLogo}>☀ SolarTech Pro</div>
-                <div className={styles.invAddress}>Plot 45, MIDC Nagpur · GST: 27AABCS1234D1Z5</div>
+                <div className={styles.invLogo}> <i class="bi bi-sun-fill"></i> ARDOUR GREEN ENERGY </div>
+                <div className={styles.invAddress}>Plot 45, MIDC Pune · GST: 12AABCS1234D1Z1</div>
               </div>
               <div className={styles.invMeta}>
                 <span>Invoice No</span><strong>{invNo}</strong>
@@ -176,14 +176,14 @@ export default function InvoiceModal({ result, bill, onClose }) {
           {/* Actions */}
           <div className={styles.actions}>
             <button className="btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={generatePDF}>
-              ⬇ Download PDF
+              <i class="bi bi-arrow-down-square-fill"></i> Download PDF
             </button>
             <button
               className="btn-outline"
               style={{ flex: 1, justifyContent: 'center' }}
-              onClick={() => { toast('Invoice emailed to customer!', '📧'); onClose() }}
+              onClick={() => { toast('Invoice emailed to customer!', <i class="bi bi-envelope-arrow-down-fill"></i> ); onClose() }}
             >
-              📧 Email Invoice
+              <i class="bi bi-envelope-arrow-down-fill"></i> Email Invoice
             </button>
           </div>
         </div>

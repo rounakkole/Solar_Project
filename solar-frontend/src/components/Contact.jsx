@@ -25,18 +25,18 @@ export default function Contact() {
 
   const submit = async () => {
     if (!form.name || !form.phone || !form.email) {
-      toast('Please fill Name, Phone & Email!', '⚠️'); return
+      toast('Please fill Name, Phone & Email!', <i class="bi bi-exclamation-triangle-fill"></i> ); return
     }
     setLoading(true)
     try {
       await api.post('/enquiries', form)
       setSent(true)
-      toast(`Enquiry sent! We'll call ${form.phone} within 24 hours.`, '📧')
+      toast(`Enquiry sent! We'll call ${form.phone} within 24 hours.`, <i class="bi bi-envelope-arrow-up-fill"></i> )
       setForm({ name:'', email:'', phone:'', city:'', service_type: SERVICES[0], monthly_bill:'', message:'' })
     } catch {
       // If API not running, simulate success
       setSent(true)
-      toast(`Enquiry saved! Our team will contact ${form.email} soon.`, '✅')
+      toast(`Enquiry saved! Our team will contact ${form.email} soon.`, <i class="bi bi-check-square-fill"></i> )
     } finally {
       setLoading(false)
       setTimeout(() => setSent(false), 7000)
@@ -57,10 +57,10 @@ export default function Contact() {
             </p>
 
             {[
-              { icon: '📍', label: 'Address',   val: 'Plot 45, Solar Park, Dhayri Pune, Maharashtra 411041' },
-              { icon: '📞', label: 'Call Us',   val: '+91 98765 43210' },
-              { icon: '✉',  label: 'Email',     val: 'info@ardourgreenenergy.in' },
-              { icon: '🕐', label: 'Hours',     val: 'Mon–Sat: 9:00 AM – 6:00 PM' },
+              { icon: <i class="bi bi-pin-map-fill"></i> , label: 'Address',   val: 'Plot 45, Solar Park, Pune, Maharashtra 411001' },
+              { icon: <i class="bi bi-telephone-fill"></i> , label: 'Call Us',   val: '+91 9876543210' },
+              { icon: <i class="bi bi-envelope-fill"></i> ,  label: 'Email',     val: 'info@gmail.in' },
+              { icon: <i class="bi bi-watch"></i> , label: 'Hours',     val: 'Mon–Sat: 9:00 AM – 6:00 PM' },
             ].map(item => (
               <div key={item.label} className={styles.infoItem}>
                 <div className={styles.infoIcon}>{item.icon}</div>
@@ -80,26 +80,26 @@ export default function Contact() {
 
           {/* Form side */}
           <div className={styles.formCard}>
-            <h3>📬 Send Enquiry</h3>
+            <h3>Send Enquiry</h3>
 
             <div className={styles.row2}>
               <div className={styles.field}>
                 <label>Full Name *</label>
-                <input placeholder="Rahul Sharma" value={form.name} onChange={e => set('name', e.target.value)} />
+                <input placeholder="Name LastName" value={form.name} onChange={e => set('name', e.target.value)} />
               </div>
               <div className={styles.field}>
                 <label>Phone *</label>
-                <input placeholder="+91 98765 43210" value={form.phone} onChange={e => set('phone', e.target.value)} />
+                <input placeholder="+91 9876543210" value={form.phone} onChange={e => set('phone', e.target.value)} />
               </div>
             </div>
             <div className={styles.row2}>
               <div className={styles.field}>
                 <label>Email *</label>
-                <input type="email" placeholder="rahul@email.com" value={form.email} onChange={e => set('email', e.target.value)} />
+                <input type="email" placeholder="name@gmail.com" value={form.email} onChange={e => set('email', e.target.value)} />
               </div>
               <div className={styles.field}>
                 <label>City</label>
-                <input placeholder="Nagpur" value={form.city} onChange={e => set('city', e.target.value)} />
+                <input placeholder="Pune" value={form.city} onChange={e => set('city', e.target.value)} />
               </div>
             </div>
             <div className={styles.row2}>
@@ -124,12 +124,12 @@ export default function Contact() {
               onClick={submit}
               disabled={loading}
             >
-              {loading ? '⏳ Sending...' : '📧 Submit Enquiry & Get Quote'}
+              {loading ? 'Sending...' : 'Submit Enquiry & Get Quote'}
             </button>
 
             {sent && (
               <div className={styles.success}>
-                ✅ Thank you! Your enquiry has been received. Our team will contact you within 24 hours.
+                Thank you! Your enquiry has been received. Our team will contact you within 24 hours.
               </div>
             )}
           </div>

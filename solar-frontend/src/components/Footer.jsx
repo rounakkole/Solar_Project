@@ -60,7 +60,7 @@ export default function Footer() {
         </div>
 
         <div className={styles.bottom}>
-          <p>© 2025 ARDOUR GREEN ENERGY. All rights reserved. Final Semester Project.</p>
+          <p> <i class="bi bi-c-circle-fill"></i> 2025 ARDOUR GREEN ENERGY. All rights reserved.</p>
           <p className={styles.tagline}> <i class="bi bi-sun-fill"></i> Go Solar. Go Green. Save Big.</p>
         </div>
       </div>

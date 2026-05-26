@@ -99,7 +99,7 @@ export default function Products() {
                       toast(`${p.product_name} added to cart!`, <i class="bi bi-cart4"></i>)
                     }}
                   >
-                    + Add to Quote
+                    <i class="bi bi-plus-square-fill"></i> Add to Quote
                   </button>
                 </div>
                 <div className={styles.stock}>

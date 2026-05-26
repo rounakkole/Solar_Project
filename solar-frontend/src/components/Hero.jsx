@@ -5,13 +5,13 @@ import styles from './Hero.module.css'
 export default function Hero() {
   const [animationData, setAnimationData] = useState(null)
 
-  // 🔥 Fetch Lottie JSON
-  useEffect(() => {
+  // Fetch Lottie JSON
+  /* useEffect(() => {
     fetch("https://lottie.host/bd53fa06-5805-45ce-b1c4-00932821b04d/uUOvrw5CFs.json")
       .then(res => res.json())
       .then(data => setAnimationData(data))
       .catch(err => console.error("Lottie error:", err))
-  }, [])
+  }, []) */
 
   return (
     <section className={styles.hero} id="hero">
@@ -35,10 +35,10 @@ export default function Hero() {
 
         <div className={styles.btns}>
           <a href="#calculator" className="btn-primary">
-            ⚡ Calculate Savings
+            Calculate Savings
           </a>
           <a href="#contact" className="btn-outline">
-            📞 Free Site Survey
+            Free Site Survey
           </a>
         </div>
 
@@ -57,11 +57,16 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* 🔥 LOTTIE */}
-      <div className={styles.lottie}>
+      {/* LOTTIE */}
+      <!-- <div className={styles.lottie}>
         {animationData && (
           <Lottie animationData={animationData} loop />
         )}
+      </div> -->
+
+
+      <div className={styles.lottie}>
+        <img src="/LOTTIE-animation.gif" alt="Animated illustration" />
       </div>
 
       {/* SCROLL */}

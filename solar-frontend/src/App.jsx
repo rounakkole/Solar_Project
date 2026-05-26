@@ -46,7 +46,7 @@ export default function App() {
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  const addToast = (msg, icon = "OK") => {
+  const addToast = (msg, icon = <i class="bi bi-check-square-fill"></i> ) => {
     const id = Date.now();
     setToasts((prev) => [...prev, { id, msg, icon }]);
     setTimeout(() => {

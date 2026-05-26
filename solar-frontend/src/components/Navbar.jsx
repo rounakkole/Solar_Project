@@ -34,7 +34,7 @@ export default function Navbar() {
 
   return (
     <nav className={`${styles.nav} ${scrolled ? styles.scrolled : ''}`}>
-      <Link to="/" className={styles.logo}>☀ ARDOUR GREEN ENERGY</Link>
+      <Link to="/" className={styles.logo}> <i class="bi bi-sun-fill"></i> ARDOUR GREEN ENERGY</Link>
 
       <ul className={`${styles.links} ${open ? styles.open : ''}`}>
         {links.map(l => (
@@ -61,7 +61,7 @@ export default function Navbar() {
           onClick={() => setIsCartOpen(true)}
           style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', position: 'relative' }}
         >
-          🛒
+          <i className="bi bi-cart4" style={{ padding: '0 10px' }}></i>
           {cart.length > 0 && (
             <span style={{ position: 'absolute', top: '-8px', right: '-8px', background: 'var(--primary)', color: 'white', borderRadius: '50%', padding: '2px 6px', fontSize: '0.8rem', fontWeight: 'bold' }}>
               {cart.length}
@@ -74,10 +74,12 @@ export default function Navbar() {
       </div>
 
       <button className={styles.hamburger} onClick={() => setOpen(o => !o)} aria-label="menu">
-        <span className={open ? styles.cross1 : ''} />
-        <span className={open ? styles.crossHide : ''} />
-        <span className={open ? styles.cross2 : ''} />
+        <i 
+          className={open ? "bi bi-x-lg" : "bi bi-menu-button-wide"} 
+          style={{ fontSize: '2rem', color: 'var(--primary)' }}
+        ></i>
       </button>
+
     </nav>
   )
 }

@@ -123,7 +123,7 @@ export default function Calculator() {
             </div>
 
             <button className="btn-primary" style={{ width: '100%', justifyContent: 'center' }} onClick={calculate}>
-              Calculate ⚡
+              Calculate
             </button>
 
             {result && (
@@ -146,7 +146,7 @@ export default function Calculator() {
                   style={{ width: '100%', justifyContent: 'center', marginTop: '1rem' }}
                   onClick={() => setShowInvoice(true)}
                 >
-                  📄 Generate Invoice
+                  Generate Invoice
                 </button>
               </div>
             )}
@@ -154,7 +154,7 @@ export default function Calculator() {
 
           {/* ─── Chart Panel ─── */}
           <div className={styles.chartPanel}>
-            <h3>💰 25-Year Savings Projection</h3>
+            <h3>25-Year Savings Projection</h3>
             {chartData
               ? <div style={{ height: 300 }}><Line data={chartData} options={chartOpts} /></div>
               : <div className={styles.chartEmpty}>Enter your bill amount to see the projection →</div>

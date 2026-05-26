@@ -13,7 +13,7 @@ export default function CartSidebar() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (cart.length === 0) return toast('Cart is empty', '⚠️');
+    if (cart.length === 0) return toast('Cart is empty', <i class="bi bi-exclamation-triangle-fill"></i> );
     
     setLoading(true);
     try {
@@ -31,12 +31,12 @@ export default function CartSidebar() {
         message: message
       });
       
-      toast('Quotation requested successfully!', '✅');
+      toast('Quotation requested successfully!', <i class="bi bi-check-square-fill"></i> );
       clearCart();
       setIsCartOpen(false);
     } catch (err) {
       console.error(err);
-      toast('Failed to submit quote', '❌');
+      toast('Failed to submit quote', <i class="bi bi-x-square-fill"></i> );
     } finally {
       setLoading(false);
     }
@@ -47,7 +47,7 @@ export default function CartSidebar() {
       {isCartOpen && <div className={styles.overlay} onClick={() => setIsCartOpen(false)}></div>}
       <div className={`${styles.sidebar} ${isCartOpen ? styles.open : ''}`}>
         <div className={styles.header}>
-          <h2>🛒 Your Cart ({cart.length})</h2>
+          <h2>Your Cart ({cart.length})</h2>
           <button className={styles.closeBtn} onClick={() => setIsCartOpen(false)}>✕</button>
         </div>
         
@@ -65,7 +65,7 @@ export default function CartSidebar() {
                   className={styles.removeBtn}
                   onClick={() => removeFromCart(index)}
                 >
-                  🗑
+                  <i class="bi bi-trash3-fill"></i>
                 </button>
               </div>
             ))
