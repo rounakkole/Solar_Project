@@ -546,7 +546,7 @@ Suppliers: {
         <Link to="/" className={styles.sideLogoWrap}>
           <div className={styles.sideLogo}> <i class="bi bi-sun-fill"></i> </div>
           <div>
-            <div className={styles.sideLogoText}>SolarTech Pro</div>
+            <div className={styles.sideLogoText}>ARDOUR GREEN ENERGY</div>
             <div className={styles.sideLogoSub}>Admin Panel</div>
           </div>
         </Link>
@@ -1146,7 +1146,7 @@ Suppliers: {
                             key: data.data.key_id,
                             amount: data.data.amount * 100,
                             currency: 'INR',
-                            name: 'SolarTech Pro',
+                            name: 'ARDOUR GREEN ENERGY',
                             description: `Payment for ORD-${viewOrder.order_id}`,
                             order_id: data.data.razorpay_order_id,
                             handler: async function (response) {
@@ -1198,7 +1198,7 @@ Suppliers: {
                     <strong style={{ color: '#10B981' }}>Payment is verified automatically — no fake confirmations.</strong>
                   </p>
                   <div style={{ background: 'rgba(16,185,129,0.07)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 8, padding: '10px 14px', marginBottom: 20, fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                    UPI ID: <strong style={{ color: 'var(--text)' }}>koleprathmesh-2@oksbi</strong> {/* ToDo: change */}
+                    UPI ID: <strong style={{ color: 'var(--text)' }}>name@okbank</strong> 
                   </div>
                   <button
                     className="btn-primary"
@@ -1215,11 +1215,11 @@ Suppliers: {
                           key: data.data.key_id,
                           amount: Math.round(Number(data.data.amount) * 100),
                           currency: 'INR',
-                          name: 'SolarTech Pro',
+                          name: 'ARDOUR GREEN ENERGY',
                           description: `ORD-${String(viewOrder.order_id).padStart(3,'0')}`,
                           order_id: data.data.razorpay_order_id,
                           prefill: { contact: viewOrder.customer_phone || '', email: viewOrder.customer_email || '' },
-                          notes: { upi_id: 'koleprathmesh-2@oksbi' }, {/* ToDo: change */}
+                          notes: { upi_id: 'name@okbank' }, 
                           handler: async function (response) {
                             try {
                               await api.post('/razorpay/verify', {

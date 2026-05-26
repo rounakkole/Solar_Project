@@ -61,7 +61,7 @@ export default function RazorpayPayment({
         key: response.data.data.key_id,
         amount: amount * 100,
         currency: 'INR',
-        name: 'SolarTech Solutions',
+        name: 'ARDOUR GREEN ENERGY',
         order_id: response.data.data.razorpay_order_id,
 
         handler: async function () {

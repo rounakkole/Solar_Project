@@ -111,7 +111,7 @@ export default function InvoiceModal({ result, bill, onClose }) {
     doc.text('Thank you for choosing ARDOUR GREEN ENERGY. Warranty: 10 years panel, 5 years inverter.', 105, 278, { align: 'center' })
     doc.text('Computer generated invoice — no signature required.', 105, 284, { align: 'center' })
 
-    doc.save(`SolarTech_${invNo}.pdf`)
+    doc.save(`ARDOUR_GREEN_ENERGY_${invNo}.pdf`)
     toast('PDF Invoice downloaded!', <i class="bi bi-check-square-fill"></i> )
   }
 

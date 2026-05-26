@@ -29,12 +29,12 @@ function enquiryConfirmationHTML(data) {
         </table>
       </div>
       <p>Our team will contact you on <strong>${data.phone}</strong>.</p>
-      <a href="https://solartechpro.in/calculator" style="display:inline-block;background:#F59E0B;color:#000;padding:10px 24px;border-radius:8px;text-decoration:none;font-weight:700;margin-top:8px">
-        ⚡ Calculate Your Savings
+      <a href="${process.env.FRONTEND_URL}/calculator" style="display:inline-block;background:#F59E0B;color:#000;padding:10px 24px;border-radius:8px;text-decoration:none;font-weight:700;margin-top:8px">
+        Calculate Your Savings
       </a>
     </div>
     <div style="padding:16px 30px;border-top:1px solid #374151;font-size:0.78rem;color:#6B7280">
-      Solar Plot 45, MIDC Pune +91 98765 43210 · info@solartechpro.in
+      Solar Plot 45, MIDC Pune +91 9876543210 · info@gmail.com
     </div>
   </div>`
 }
