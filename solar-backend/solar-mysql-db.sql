@@ -222,7 +222,7 @@ CREATE TABLE IF NOT EXISTS razorpay_orders (
 -- ============================================================
 
 -- Customers
-INSERT INTO customers (name, email, phone, address, city, state, pincode, property_type) VALUES
+INSERT IGNORE INTO customers (name, email, phone, address, city, state, pincode, property_type) VALUES
 ('Rajesh D',  'rajesh@email.com',  '9876543210', 'Flat 4B, Sadar',        'Chinchwad',  'Maharashtra', '440001', 'residential'),
 ('Priya H',  'priya@email.com',   '9765432109', 'Baner Road',            'Pune',    'Maharashtra', '411045', 'commercial'),
 ('Amit A',    'amit@email.com',    '9654321098', 'Andheri East',          'Mumbai',  'Maharashtra', '400069', 'industrial'),
@@ -233,7 +233,7 @@ INSERT INTO customers (name, email, phone, address, city, state, pincode, proper
 ('Suresh S',   'suresh@email.com',  '9109876543', 'Satpur MIDC',           'Nashik',  'Maharashtra', '422007', 'industrial');
 
 -- Suppliers
-INSERT INTO suppliers (company_name, contact_person, email, phone, city, gst_number, status) VALUES
+INSERT IGNORE INTO suppliers (company_name, contact_person, email, phone, city, gst_number, status) VALUES
 ('Waaree Energies Ltd',   'Mr. Patil',  'patil@waaree.com',    '9800000001', 'Surat',   '27AABCW5678G1Z1', 'active'),
 ('Luminous Power Tech',   'Mr. Gupta',  'gupta@luminous.com',  '9800000002', 'Delhi',   '07AABCL9012H2Z2', 'active'),
 ('Tata Power Solar',      'Ms. Singh',  'singh@tatapwr.com',   '9800000003', 'Mumbai',  '27AABCT3456I3Z3', 'active'),
@@ -241,7 +241,7 @@ INSERT INTO suppliers (company_name, contact_person, email, phone, city, gst_num
 ('Exide Industries',      'Mr. Roy',    'roy@exide.com',       '9800000005', 'Kolkata', '19AABCE1234K5Z5', 'active');
 
 -- Products
-INSERT INTO products (supplier_id, product_name, model_number, category, brand, wattage, efficiency, warranty_years, price, mrp, stock_quantity, description) VALUES
+INSERT IGNORE INTO products (supplier_id, product_name, model_number, category, brand, wattage, efficiency, warranty_years, price, mrp, stock_quantity, description) VALUES
 (1,'Mono PERC Solar Panel 400W','WE-400M-72','panel',   'Waaree',  400, 21.3, 25, 18500.00, 21000.00, 150, 'High-efficiency monocrystalline PERC panel. Anti-reflective coating.'),
 (1,'Poly Solar Panel 330W',     'WE-330P-60','panel',   'Waaree',  330, 17.8, 25, 14200.00, 16500.00, 200, 'Budget polycrystalline panel. Ideal for large installations.'),
 (3,'Bi-facial Panel 450W',      'TP-450BF',  'panel',   'Tata',    450, 22.1, 25, 24000.00, 27000.00,  80, 'Premium bi-facial panel. Generates from both sides.'),
@@ -255,7 +255,7 @@ INSERT INTO products (supplier_id, product_name, model_number, category, brand, 
 (4,'4 Sqmm DC Cable (100m)',    'PC-SOL04',  'cable',   'Polycab',  0,  1.5,  5,  4200.00,  5500.00,  120, 'TUV-certified, single-core copper DC cable. XLPO insulation.');
 
 -- Orders
-INSERT INTO orders (customer_id, system_size_kw, subtotal, gst_amount, subsidy_amount, total_amount, status) VALUES
+INSERT IGNORE INTO orders (customer_id, system_size_kw, subtotal, gst_amount, subsidy_amount, total_amount, status) VALUES
 (1,  5.0,  280000,  50400,  78000,  247000, 'installed'),
 (2, 10.0,  520000,  93600,  78000,  485000, 'confirmed'),
 (3, 50.0, 2200000, 396000,      0, 2250000, 'pending'),
@@ -265,20 +265,20 @@ INSERT INTO orders (customer_id, system_size_kw, subtotal, gst_amount, subsidy_a
 (7,  4.0,  215000,  38700,  64500,  175000, 'pending');
 
 -- Order Items
-INSERT INTO order_items (order_id, product_id, quantity, unit_price) VALUES
+INSERT IGNORE INTO order_items (order_id, product_id, quantity, unit_price) VALUES
 (1, 1, 13, 18500), (1, 4, 1, 32000), (1, 9, 1, 12000),
 (2, 1, 26, 18500), (2, 6, 1, 55000), (2, 9, 2, 12000),
 (4, 1,  8, 18500), (4, 5, 1, 18500), (4, 9, 1, 12000);
 
 -- Installations
-INSERT INTO installations (order_id, customer_id, technician_name, technician_phone, city, latitude, longitude, panel_count, total_kw, roof_type, scheduled_date, completion_date, status) VALUES
+INSERT IGNORE INTO installations (order_id, customer_id, technician_name, technician_phone, city, latitude, longitude, panel_count, total_kw, roof_type, scheduled_date, completion_date, status) VALUES
 (1, 1, 'Ravi Yadav',   '9700000001', 'Nagpur',  21.1458, 79.0882, 13, 5.0,  'flat',   '2025-03-15', '2025-03-18', 'completed'),
 (4, 4, 'Suresh Pawar', '9700000002', 'Nashik',  19.9975, 73.7898,  8, 3.0,  'sloped', '2025-03-22', '2025-03-25', 'completed'),
 (2, 2, 'Vikram Nair',  '9700000003', 'Pune',    18.5204, 73.8567, 26, 10.0, 'flat',   '2025-03-28',  NULL,        'in_progress'),
 (3, 3, 'Team Alpha',   '9700000004', 'Mumbai',  19.0760, 72.8777,125, 50.0, 'ground', '2025-04-05',  NULL,        'scheduled');
 
 -- Payments
-INSERT INTO payments (order_id, customer_id, amount, payment_date, method, transaction_id, invoice_no, status) VALUES
+INSERT IGNORE INTO payments (order_id, customer_id, amount, payment_date, method, transaction_id, invoice_no, status) VALUES
 (1, 1, 247000, '2025-03-16 10:30:00', 'neft',   'NEFT20250316001', 'INV-2025-001', 'completed'),
 (2, 2, 200000, '2025-03-19 14:15:00', 'rtgs',   'RTGS20250319001', 'INV-2025-002', 'completed'),
 (3, 3, 500000, '2025-03-21 09:00:00', 'cheque', 'CHQ00123456',     'INV-2025-003', 'pending'),
@@ -286,19 +286,19 @@ INSERT INTO payments (order_id, customer_id, amount, payment_date, method, trans
 (5, 5,  18000, '2025-03-25 11:20:00', 'upi',    'UPI20250325001',  'INV-2025-005', 'completed');
 
 -- Enquiries
-INSERT INTO enquiries (name, email, phone, city, property_type, service_type, monthly_bill, message) VALUES
+INSERT IGNORE INTO enquiries (name, email, phone, city, property_type, service_type, monthly_bill, message) VALUES
 ('Rohit Y', 'rohit@email.com', '9100000001', 'Pimpri', 'residential', 'Residential Solar Installation', 3500,  'Interested in 5kW system for my home.'),
 ('Neha W', 'neha@email.com',  '9100000002', 'Pune',   'commercial',  'Commercial Solar Installation',  12000, 'Need solar for my showroom.'),
 ('Raju T',   'raju@email.com',  '9100000003', 'Nashik', 'residential', 'Subsidy Assistance',              2800, 'Want to apply for PM Surya Ghar subsidy.');
 
 -- Subsidies
-INSERT INTO subsidies (customer_id, order_id, scheme_name, applied_date, amount, status) VALUES
+INSERT IGNORE INTO subsidies (customer_id, order_id, scheme_name, applied_date, amount, status) VALUES
 (1, 1, 'PM Surya Rooftop Solar Yojana', '2025-03-10', 78000, 'received'),
 (4, 4, 'PM Surya Rooftop Solar Yojana', '2025-03-15', 52500, 'approved'),
 (7, 7, 'PM Surya Rooftop Solar Yojana', '2025-03-20', 64500, 'applied');
 
 -- Employees
-INSERT INTO employees (name, role, phone, email, joining_date, salary) VALUES
+INSERT IGNORE INTO employees (name, role, phone, email, joining_date, salary) VALUES
 ('Sandeep B',    'manager',    '9200000001', 'sandeep@solar.in', '2020-01-15', 65000),
 ('Ravi T',      'technician', '9700000001', 'ravi@solar.in',    '2021-06-01', 28000),
 ('Suresh R',    'technician', '9700000002', 'suresh@solar.in',  '2022-03-01', 26000),

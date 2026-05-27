@@ -150,17 +150,16 @@ router.post('/verify', auth, async (req, res) => {
     // Save payment
     const [paymentResult] = await db.query(
       `INSERT INTO payments
-      (order_id, customer_id, amount, method, transaction_id, status)
-      VALUES (?, ?, ?, ?, ?, ?)`,
+      (order_id, amount, razorpay_order_id, status)
+      VALUES (?, ?, ?, ?)`,
       [
         order_id,
-        customer_id,
         amount,
-        'razorpay',
         razorpay_payment_id,
         'completed'
       ]
     )
+
 
     // Update order status
     await db.query(
@@ -209,20 +208,17 @@ router.post('/verify', auth, async (req, res) => {
 // ================================
 // GET PAYMENT DETAILS
 // ================================
-router.get('/:paymentId', auth, async (req, res) => {
+router.get('/:orderId', auth, async (req, res) => {
   try {
     const [payment] = await db.query(
       `SELECT 
         p.*, 
-        c.name AS customer_name,
         o.order_date
       FROM payments p
-      JOIN customers c 
-      ON p.customer_id = c.customer_id
       JOIN orders o 
       ON p.order_id = o.order_id
-      WHERE p.payment_id = ?`,
-      [req.params.paymentId]
+      WHERE p.razorpay_order_id = ?`,
+      [req.params.orderId]
     )
 
     if (!payment.length) {
