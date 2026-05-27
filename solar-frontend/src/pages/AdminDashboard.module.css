@@ -195,10 +195,34 @@
 .mField label { display: block; font-size: 0.78rem; color: var(--text2); margin-bottom: 0.3rem; }
 .modalActions { display: flex; gap: 0.8rem; justify-content: flex-end; }
 
-@media (max-width: 900px) {
-  .sidebar { display: none; }
-  .dashGrid { grid-template-columns: 1fr; }
+@media (max-width: 700px) {
+  .sidebar { 
+    width: 155px; 
+  }
+  .dashGrid { 
+    grid-template-columns: 155px 1fr; 
+  }
+  .sideLogoWrap { 
+    padding: 0.5rem 0.6rem 1rem; 
+    gap: 0.4rem; 
+  }
+  .sideLogoText { 
+    font-size: 0.75rem; 
+  }
+  .sideNav { 
+    padding: 0 0.4rem; 
+  }
+  .navItem { 
+    font-size: 0.78rem; 
+    padding: 0.5rem; 
+    gap: 0.4rem; 
+  }
+  .sideBack { 
+    padding: 1rem 0.6rem 0.5rem; 
+    font-size: 0.75rem; 
+  }
 }
+
 @media (max-width: 480px) {
   .formGrid { grid-template-columns: 1fr; }
   .metrics  { grid-template-columns: 1fr 1fr; }

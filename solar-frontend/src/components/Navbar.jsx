@@ -75,7 +75,7 @@ export default function Navbar() {
 
       <button className={styles.hamburger} onClick={() => setOpen(o => !o)} aria-label="menu">
         <i 
-          className={open ? "bi bi-x-lg" : "bi bi-menu-button-wide"} 
+          className={open ? "bi bi-x-lg" : "bi bi-list"} 
           style={{ fontSize: '2rem', color: 'var(--primary)' }}
         ></i>
       </button>

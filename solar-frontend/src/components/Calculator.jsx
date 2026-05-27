@@ -157,7 +157,7 @@ export default function Calculator() {
             <h3>25-Year Savings Projection</h3>
             {chartData
               ? <div style={{ height: 300 }}><Line data={chartData} options={chartOpts} /></div>
-              : <div className={styles.chartEmpty}>Enter your bill amount to see the projection →</div>
+              : <div className={styles.chartEmpty}>Enter your bill amount to see the projection <i class="bi bi-arrow-right-square-fill"></i> </div>
             }
             {result && (
               <div className={styles.chartStats}>

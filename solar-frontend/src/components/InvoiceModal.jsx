@@ -32,7 +32,7 @@ export default function InvoiceModal({ result, bill, onClose }) {
     doc.rect(0, 0, 210, 16, 'F')
 
     // Title bar
-    doc.setFont('helvetica', 'bold')
+    doc.setFont('ubuntu', 'bold')
     doc.setFontSize(12)
     doc.setTextColor(0, 0, 0)
     doc.text('ARDOUR GREEN ENERGY — INVOICE', 105, 11, { align: 'center' })
@@ -43,7 +43,7 @@ export default function InvoiceModal({ result, bill, onClose }) {
     doc.text('ARDOUR GREEN ENERGY', 15, 28)
     doc.setTextColor(180, 180, 180)
     doc.setFontSize(8)
-    doc.setFont('helvetica', 'normal')
+    doc.setFont('ubuntu', 'normal')
     doc.text('Plot 45, MIDC Pune, Maharashtra 411001', 15, 35)
     doc.text('GST: 12AABCS1234D1Z5  |  Ph: +91 98765 43210  |  info@gmail.in', 15, 41)
 
@@ -55,12 +55,12 @@ export default function InvoiceModal({ result, bill, onClose }) {
     // Invoice meta
     doc.setFontSize(9)
     doc.setTextColor(245, 158, 11)
-    doc.setFont('helvetica', 'bold')
+    doc.setFont('ubuntu', 'bold')
     doc.text('Invoice No:', 15, 55)
     doc.text('Date:', 120, 55)
     doc.text('System:', 15, 63)
     doc.setTextColor(255, 255, 255)
-    doc.setFont('helvetica', 'normal')
+    doc.setFont('ubuntu', 'normal')
     doc.text(invNo, 50, 55)
     doc.text(today, 145, 55)
     doc.text(`${sizeKw} kW Solar System`, 50, 63)
@@ -101,13 +101,13 @@ export default function InvoiceModal({ result, bill, onClose }) {
     doc.rect(120, finalY + 36, 75, 12, 'F')
     doc.setTextColor(0, 0, 0)
     doc.setFontSize(10)
-    doc.setFont('helvetica', 'bold')
+    doc.setFont('ubuntu', 'bold')
     doc.text(`TOTAL: ₹${fmt(result.net)}`, 193, finalY + 44, { align: 'right' })
 
     // Footer
     doc.setTextColor(120, 120, 120)
     doc.setFontSize(8)
-    doc.setFont('helvetica', 'normal')
+    doc.setFont('ubuntu', 'normal')
     doc.text('Thank you for choosing ARDOUR GREEN ENERGY. Warranty: 10 years panel, 5 years inverter.', 105, 278, { align: 'center' })
     doc.text('Computer generated invoice — no signature required.', 105, 284, { align: 'center' })
 

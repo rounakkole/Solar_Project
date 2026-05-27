@@ -1,5 +1,5 @@
 -- ============================================================
--- SOLAR PANEL INSTALLATION WEBSITE — COMPLETE DATABASE
+-- SOLAR PANEL INSTALLATION WEBSITE - COMPLETE DATABASE
 -- Project  : Final Semester Project
 -- Database : MySQL 8.0+
 -- Run      : mysql -u root -p < solar-mysql-db.sql
@@ -237,7 +237,8 @@ INSERT INTO products (supplier_id, product_name, model_number, category, brand, 
 (5,'Lithium Battery 5kWh',      'EX-LFP5000','battery', 'Exide',     0, 96.0, 10, 85000.00, 95000.00,  20, 'LiFePO4, 6000-cycle life, built-in BMS.'),
 (5,'Lead Acid Battery 150Ah',   'EX-LA150',  'battery', 'Exide',     0, 85.0,  5, 12000.00, 14500.00, 100, 'VRLA maintenance-free. C10 rated.'),
 (4,'GI Mount Structure 5kW',    'NX-STR5K',  'structure','Nexus',    0,  0.0, 15, 12000.00, 14000.00,  50, 'Hot-dip galvanized, 150 kmph wind-rated.'),
-(4,'ACDB/DCDB Box',             'NX-ACDC',   'accessory','Nexus',    0,  0.0,  5,  4500.00,  5500.00,  80, 'AC/DC distribution box with MCB protection.');
+(4,'ACDB/DCDB Box',             'NX-ACDC',   'accessory','Nexus',    0,  0.0,  5,  4500.00,  5500.00,  80, 'AC/DC distribution box with MCB protection.'),
+(4,'4 Sqmm DC Cable (100m)',    'PC-SOL04',  'cable',   'Polycab',  0,  1.5,  5,  4200.00,  5500.00,  120, 'TUV-certified, single-core copper DC cable. XLPO insulation.');
 
 -- Orders
 INSERT INTO orders (customer_id, system_size_kw, subtotal, gst_amount, subsidy_amount, total_amount, status) VALUES
