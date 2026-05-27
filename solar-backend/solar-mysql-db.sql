@@ -203,19 +203,6 @@ CREATE TABLE IF NOT EXISTS employees (
   created_at   TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
 );
 
--- ───────────────────────────────────────────────────────────
--- TABLE 11: RAZORPAY
--- ───────────────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS razorpay_orders (
-  id                  INT AUTO_INCREMENT PRIMARY KEY,
-  order_id            INT NOT NULL, 
-  razorpay_order_id   VARCHAR(100) NOT NULL UNIQUE,
-  amount              INT NOT NULL, 
-  status              VARCHAR(50) DEFAULT 'created',
-  created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
 
 -- ============================================================
 -- SAMPLE DATA

@@ -65,16 +65,18 @@ router.post('/init', auth, async (req, res) => {
 
     console.log("RAZORPAY ORDER:", razorpayOrder)
 
-    // Save Razorpay order
+    // Save Razorpay order razorpay_orders
     await db.query(
-      `INSERT INTO razorpay_orders 
-      (order_id, razorpay_order_id, amount, status)
-      VALUES (?, ?, ?, ?)`,
+      `INSERT INTO payments 
+      (order_id, customer_id, amount, method, transaction_id, status)
+      VALUES (?, ?, ?, ?, ?, ?)`,
       [
         order_id,
-        razorpayOrder.id,
+        customer_id,
         amount,
-        'created'
+        'card',
+        razorpay_payment_id,
+        'completed'
       ]
     )
 
@@ -150,7 +152,7 @@ router.post('/verify', auth, async (req, res) => {
     // Save payment
     const [paymentResult] = await db.query(
       `INSERT INTO payments
-      (order_id, amount, razorpay_order_id, status)
+      (order_id, amount, transaction_id, status)
       VALUES (?, ?, ?, ?)`,
       [
         order_id,
@@ -169,11 +171,11 @@ router.post('/verify', auth, async (req, res) => {
       ['confirmed', order_id]
     )
 
-    // Update Razorpay order
+    // Update Razorpay order razorpay_orders
     await db.query(
-      `UPDATE razorpay_orders
+      `UPDATE payments
        SET status = ?, payment_id = ?
-       WHERE razorpay_order_id = ?`,
+       WHERE transaction_id = ?`,
       [
         'verified',
         razorpay_payment_id,
@@ -208,7 +210,7 @@ router.post('/verify', auth, async (req, res) => {
 // ================================
 // GET PAYMENT DETAILS
 // ================================
-router.get('/:orderId', auth, async (req, res) => {
+router.get('/:paymentId', auth, async (req, res) => {
   try {
     const [payment] = await db.query(
       `SELECT 
@@ -217,8 +219,8 @@ router.get('/:orderId', auth, async (req, res) => {
       FROM payments p
       JOIN orders o 
       ON p.order_id = o.order_id
-      WHERE p.razorpay_order_id = ?`,
-      [req.params.orderId]
+      WHERE p.payment_id = ?`,
+      [req.params.paymentId]
     )
 
     if (!payment.length) {
