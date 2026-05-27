@@ -216,7 +216,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     fetchAllData();
 
-    const socket = io('${import.meta.env.VITE_BACKEND_URL}');
+    const socket = io(`${import.meta.env.VITE_BACKEND_URL}`);
     socket.on('dashboard_update', () => {
       fetchAllData();
     });
