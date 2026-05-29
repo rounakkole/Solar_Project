@@ -276,9 +276,9 @@ WHERE NOT EXISTS (SELECT 1 FROM orders);
 -- Order Items
 INSERT INTO order_items (order_id, product_id, quantity, unit_price) 
 SELECT * FROM (VALUES
-    ROW(1, 1, 13, 18500), (1, 4, 1, 32000), (1, 9, 1, 12000),
-    ROW(2, 1, 26, 18500), (2, 6, 1, 55000), (2, 9, 2, 12000),
-    ROW(4, 1,  8, 18500), (4, 5, 1, 18500), (4, 9, 1, 12000)
+    ROW(1, 1, 13, 18500), ROW(1, 4, 1, 32000), ROW(1, 9, 1, 12000),
+    ROW(2, 1, 26, 18500), ROW(2, 6, 1, 55000), ROW(2, 9, 2, 12000),
+    ROW(4, 1,  8, 18500), ROW(4, 5, 1, 18500), ROW(4, 9, 1, 12000)
 ) AS test_data
 WHERE NOT EXISTS (SELECT 1 FROM order_items);
 
