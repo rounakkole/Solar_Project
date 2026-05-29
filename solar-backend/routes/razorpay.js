@@ -65,6 +65,7 @@ router.post('/init', auth, async (req, res) => {
 
     console.log("RAZORPAY ORDER:", razorpayOrder)
 
+    /*
     // Save Razorpay order razorpay_orders
     await db.query(
       `INSERT INTO payments 
@@ -79,6 +80,7 @@ router.post('/init', auth, async (req, res) => {
         'completed'
       ]
     )
+    */
 
     res.json({
       success: true,
@@ -171,6 +173,7 @@ router.post('/verify', auth, async (req, res) => {
       ['confirmed', order_id]
     )
 
+    /*
     // Update Razorpay order razorpay_orders
     await db.query(
       `UPDATE payments
@@ -182,6 +185,7 @@ router.post('/verify', auth, async (req, res) => {
         razorpay_order_id
       ]
     )
+    */
 
     if (req.io) {
       req.io?.emit('dashboard_update')

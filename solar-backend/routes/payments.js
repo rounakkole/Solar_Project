@@ -2,11 +2,11 @@ const express = require('express')
 const router  = express.Router()
 const db      = require('../config/db')
 const auth = require('../middleware/auth');
-// GET summary for admin
-router.get('/summary',auth, async (req, res) => {
+// GET all payments for admin dashboard
+router.get('/all', auth, async (req, res) => {
   try {
     const [rows] = await db.query(`
-      SELECT p.*, c.name AS customer_name, c.email
+      SELECT p.*, COALESCE(p.method, 'razorpay') AS method, c.name AS customer_name, c.email
       FROM payments p
       JOIN customers c ON p.customer_id = c.customer_id
       ORDER BY p.payment_date DESC
@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
   try {
     const { status, method, customer_id } = req.query
     let sql = `
-      SELECT p.*, c.name AS customer_name
+      SELECT p.*, COALESCE(p.method, 'razorpay') AS method, c.name AS customer_name
       FROM payments p
       JOIN customers c ON p.customer_id = c.customer_id
       WHERE 1=1`
@@ -37,6 +37,58 @@ router.get('/', async (req, res) => {
     res.status(500).json({ message: err.message })
   }
 })
+
+
+
+// GET revenue summary for dashboard << must be BEFORE /:id
+router.get('/summary', async (req, res) => {
+  try {
+    const [total] = await db.query(`
+      SELECT
+        COALESCE(SUM(amount), 0) AS total_revenue,
+        COUNT(*) AS total_payments,
+        COALESCE(SUM(CASE WHEN MONTH(payment_date) = MONTH(CURDATE()) AND YEAR(payment_date) = YEAR(CURDATE()) THEN amount ELSE 0 END), 0) AS this_month,
+        COALESCE(SUM(CASE WHEN MONTH(payment_date) = MONTH(CURDATE())-1 AND YEAR(payment_date) = YEAR(CURDATE()) THEN amount ELSE 0 END), 0) AS last_month
+      FROM payments WHERE status = 'completed'
+    `)
+    const row = total[0]
+    const pct = row.last_month > 0
+      ? Math.round(((row.this_month - row.last_month) / row.last_month) * 100)
+      : 0
+    res.json({
+      total_revenue: Number(row.total_revenue) || 0,
+      total_payments: Number(row.total_payments) || 0,
+      this_month: Number(row.this_month) || 0,
+      last_month: Number(row.last_month) || 0,
+      month_change_pct: pct
+    })
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
+// GET monthly revenue report << must be BEFORE /:id
+router.get('/report/monthly', async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT
+        DATE_FORMAT(payment_date, '%b %Y') AS month,
+        DATE_FORMAT(payment_date, '%Y-%m') AS sort_key,
+        SUM(amount)  AS total_revenue,
+        COUNT(*)     AS transaction_count,
+        AVG(amount)  AS avg_transaction
+      FROM payments
+      WHERE status = 'completed'
+      GROUP BY DATE_FORMAT(payment_date, '%Y-%m')
+      ORDER BY sort_key DESC
+      LIMIT 12
+    `)
+    res.json(rows)
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+})
+
 
 // GET single payment
 router.get('/:id', async (req, res) => {
@@ -68,6 +120,7 @@ router.post('/', async (req, res) => {
     )
     res.status(201).json({ payment_id: result.insertId, message: 'Payment recorded successfully' })
     req.io?.emit('dashboard_update');
+    req.io?.emit('payment_completed'); // triggers revenue refresh
   } catch (err) {
     res.status(500).json({ message: err.message })
   }
@@ -86,26 +139,22 @@ router.patch('/:id/status', async (req, res) => {
   }
 })
 
-// GET monthly revenue report
-router.get('/report/monthly', async (req, res) => {
-  try {
-    const [rows] = await db.query(`
-      SELECT
-        DATE_FORMAT(payment_date, '%b %Y') AS month,
-        DATE_FORMAT(payment_date, '%Y-%m') AS sort_key,
-        SUM(amount)  AS total_revenue,
-        COUNT(*)     AS transaction_count,
-        AVG(amount)  AS avg_transaction
-      FROM payments
-      WHERE status = 'completed'
-      GROUP BY DATE_FORMAT(payment_date, '%Y-%m')
-      ORDER BY sort_key DESC
-      LIMIT 12
-    `)
-    res.json(rows)
-  } catch (err) {
+
+
+// POST send invoice email
+const { sendInvoiceEmail } = require('../config/email')
+router.post('/send-invoice', async (req, res) => {
+
+ const { email, name, invNo, total, items, sizeKw, subsidy, gst } = req.body
+    if (!email) return res.status(400).json({ message: 'Email is required' })
+    await sendInvoiceEmail({ email, name, invNo, total, items, sizeKw, subsidy, gst })
+    res.json({ message: 'Invoice sent successfully' })
+ } catch (err) {
+    console.error('Invoice email error:', err.message)
     res.status(500).json({ message: err.message })
   }
 })
+
+
 
 module.exports = router

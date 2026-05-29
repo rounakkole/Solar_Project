@@ -2,7 +2,6 @@
   display: flex;
   min-height: 100vh;
   background: var(--bg);
-  padding-top: 80px;
 }
 
 /* ─── Sidebar ─── */
@@ -14,7 +13,7 @@
   flex-direction: column;
   padding: 1.2rem 0;
   position: sticky;
-  top: 80px;
+  top: 0px;
   height: calc(100vh - 80px);
   overflow-y: auto;
   flex-shrink: 0;
