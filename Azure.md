@@ -92,6 +92,9 @@ RAZORPAY_KEY_ID 1234
 RAZORPAY_KEY_SECRET 1234
 DB_PORT 3306
 FRONTEND_URL https://witty-sea.azurestaticapps.net
+SMTP_USER=
+SMTP_PASSWORD=Password@123
+SMTP_FROM_NAME=ARDOUR
 
 Go to the Azure Portal and navigate to your backend Web App
 On the left-hand menu, scroll down to the API section and click on CORS.

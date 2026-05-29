@@ -67,18 +67,18 @@ function orderConfirmationHTML(order, customer) {
 
 // ─── Send Functions ───────────────────────────────────────────
 async function sendEnquiryConfirmation(enquiry) {
-  if (!process.env.EMAIL_USER) return  // Skip if email not configured
+  if (!process.env.SMTP_USER) return  // Skip if email not configured
   try {
     await transporter.sendMail({
-      from:    FROM
+      from:    FROM,
       to:      enquiry.email,
       subject: 'Enquiry Received — Solar',
       html:    enquiryConfirmationHTML(enquiry),
     })
     // Also notify internal team
     await transporter.sendMail({
-      from:    FROM
-      to:      process.env.EMAIL_USER,
+      from:    FROM,
+      to:      process.env.SMTP_USER,
       subject: `New Enquiry: ${enquiry.name} — ${enquiry.service_type}`,
       html:    `<p>New enquiry from <strong>${enquiry.name}</strong> (${enquiry.phone})<br>Service: ${enquiry.service_type}<br>City: ${enquiry.city}</p>`,
     })
@@ -89,10 +89,10 @@ async function sendEnquiryConfirmation(enquiry) {
 }
 
 async function sendOrderConfirmation(order, customer) {
-  if (!process.env.EMAIL_USER || !customer.email) return
+  if (!process.env.SMTP_USER || !customer.email) return
   try {
     await transporter.sendMail({
-      from:    FROM
+      from:    FROM,
       to:      customer.email,
       subject: `Order Confirmed ORD-${String(order.order_id).padStart(3,'0')} — Solar`,
       html:    orderConfirmationHTML(order, customer),
