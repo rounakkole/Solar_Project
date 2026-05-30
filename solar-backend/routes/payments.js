@@ -144,7 +144,7 @@ router.patch('/:id/status', async (req, res) => {
 // POST send invoice email
 const { sendInvoiceEmail } = require('../config/email')
 router.post('/send-invoice', async (req, res) => {
-
+try {
  const { email, name, invNo, total, items, sizeKw, subsidy, gst } = req.body
     if (!email) return res.status(400).json({ message: 'Email is required' })
     await sendInvoiceEmail({ email, name, invNo, total, items, sizeKw, subsidy, gst })
