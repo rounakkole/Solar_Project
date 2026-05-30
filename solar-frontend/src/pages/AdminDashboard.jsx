@@ -232,7 +232,10 @@ export default function AdminDashboard() {
   useEffect(() => {
     fetchAllData();
 
-    // const socket = io('http://localhost:5000');
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"; // net::ERR_CONNECTION_REFUSED
+    const socket = io(BACKEND_URL, {
+      withCredentials: true 
+    }); // ReferenceError: socket is not defined
     // Refresh data on any backend event
     const refresh = () => { fetchAllData(); };
     socket.on('dashboard_update', refresh);
